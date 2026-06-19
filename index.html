@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Investments — Anirudh Venkatesan</title>
+<title>Anirudh Venkatesan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -14,265 +14,218 @@
     --ink-soft: #5B5650;
     --rule: #DEDACE;
     --navy: #2C4159;
-    --pos: #2F6F4E;   /* gain */
-    --neg: #A63D40;   /* loss */
+    --pos: #2F6F4E;
+    --neg: #A63D40;
   }
 
   *{ box-sizing: border-box; }
   html{ -webkit-font-smoothing: antialiased; }
 
   body{
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'Inter', sans-serif;
-    line-height: 1.65;
-    font-size: 17px;
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: 'Inter', sans-serif; line-height: 1.65; font-size: 17px;
   }
+  .wrap{ max-width: 640px; margin: 0 auto; padding: 44px 24px 120px; }
 
-  .wrap{
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 48px 24px 120px;
-  }
-
-  /* ---- top nav / tabs ---- */
+  /* ---------- nav / tabs ---------- */
   .nav{
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding-bottom: 18px;
-    margin-bottom: 56px;
-    border-bottom: 1px solid var(--rule);
-    flex-wrap: wrap;
-    gap: 10px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 18px; margin-bottom: 64px; border-bottom: 1px solid var(--rule);
+    flex-wrap: wrap; gap: 10px;
   }
   .nav .who{
-    font-family: 'Newsreader', serif;
-    font-weight: 600;
-    font-size: 18px;
-    letter-spacing: -0.01em;
-    color: var(--ink);
-    text-decoration: none;
+    font-family: 'Newsreader', serif; font-weight: 600; font-size: 18px;
+    letter-spacing: -0.01em; color: var(--ink); text-decoration: none; cursor: pointer;
   }
-  .nav .tabs{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
+  .nav .tabs{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; }
   .nav .tabs a{
-    color: var(--ink-soft);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    padding-bottom: 2px;
-    transition: color 0.15s ease, border-color 0.15s ease;
+    color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid transparent;
+    padding-bottom: 2px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease;
   }
   .nav .tabs a + a{ margin-left: 20px; }
   .nav .tabs a:hover{ color: var(--navy); }
-  .nav .tabs a.active{
-    color: var(--navy);
-    border-bottom-color: var(--navy);
-  }
+  .nav .tabs a.active{ color: var(--navy); border-bottom-color: var(--navy); }
 
-  /* ---- header ---- */
-  header{ margin-bottom: 44px; }
-  .name{
-    font-family: 'Newsreader', serif;
-    font-weight: 600;
-    font-size: 40px;
-    letter-spacing: -0.01em;
-    margin: 0 0 14px;
-  }
-  .lede{
-    font-size: 16px;
-    color: var(--ink);
-    max-width: 560px;
-    margin: 0 0 26px;
-  }
+  /* ---------- tab panels ---------- */
+  .tab-panel{ display: none; }
+  .tab-panel.active{ display: block; animation: fade 0.25s ease; }
+  @keyframes fade{ from{ opacity: 0; transform: translateY(4px);} to{ opacity: 1; transform: none;} }
 
-  /* ---- summary strip ---- */
-  .summary{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    overflow: hidden;
+  /* ---------- home ---------- */
+  .name{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 44px; letter-spacing: -0.01em; margin: 0 0 18px; }
+  .bio{ font-size: 17px; color: var(--ink); max-width: 540px; margin: 0; }
+  .bio a, .links a{ color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--rule); transition: border-color 0.15s ease; cursor: pointer; }
+  .bio a:hover, .links a:hover{ border-bottom-color: var(--navy); }
+  .links{ margin-top: 24px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+  .links a{ border-bottom-color: transparent; }
+
+  /* ---------- panel heading ---------- */
+  .panel-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 40px; letter-spacing: -0.01em; margin: 0 0 14px; }
+  .panel-lede{ font-size: 16px; color: var(--ink); max-width: 560px; margin: 0 0 30px; }
+
+  /* ---------- papers / report blocks ---------- */
+  .papers{ display: flex; flex-direction: column; gap: 52px; margin-top: 8px; }
+  .paper-tag{ font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); margin: 0 0 8px; }
+  .paper-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 25px; line-height: 1.3; margin: 0 0 12px; }
+  .paper-desc{ color: var(--ink); margin: 0 0 16px; }
+  .paper-link{
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--navy); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--navy);
+    padding-bottom: 1px; transition: opacity 0.15s ease;
   }
-  .summary .cell{
-    flex: 1 1 auto;
-    min-width: 96px;
-    padding: 14px 16px;
-    border-right: 1px solid var(--rule);
-  }
+  .paper-link:hover{ opacity: 0.6; }
+  .paper-link svg{ width: 11px; height: 11px; }
+
+  /* ---------- investments: summary ---------- */
+  .summary{ display: flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+  .summary .cell{ flex: 1 1 auto; min-width: 96px; padding: 14px 16px; border-right: 1px solid var(--rule); }
   .summary .cell:last-child{ border-right: 0; }
-  .summary .k{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.11em;
-    color: var(--ink-soft);
-    margin: 0 0 5px;
-  }
-  .summary .v{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 19px;
-    font-weight: 500;
-    color: var(--ink);
-  }
-  .feed-note{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11.5px;
-    color: var(--ink-soft);
-    margin: 12px 2px 0;
-  }
+  .summary .k{ font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.11em; color: var(--ink-soft); margin: 0 0 5px; }
+  .summary .v{ font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500; color: var(--ink); }
+  .feed-note{ font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-soft); margin: 12px 2px 0; }
 
-  /* ---- positions ---- */
-  .positions{
-    display: flex;
-    flex-direction: column;
-    gap: 56px;
-    margin-top: 64px;
-  }
-  .position{ }
-
-  /* the stat bar that sits above each report */
-  .ledger{
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    border: 1px solid var(--rule);
-    border-radius: 2px;
-    background: #FBF9F3;
-    margin-bottom: 18px;
-  }
-  .ledger .lc{
-    padding: 11px 12px;
-    border-right: 1px solid var(--rule);
-  }
+  /* ---------- investments: positions ---------- */
+  .positions{ display: flex; flex-direction: column; gap: 56px; margin-top: 60px; }
+  .ledger{ display: grid; grid-template-columns: repeat(6, 1fr); border: 1px solid var(--rule); border-radius: 2px; background: #FBF9F3; margin-bottom: 18px; }
+  .ledger .lc{ padding: 11px 12px; border-right: 1px solid var(--rule); }
   .ledger .lc:last-child{ border-right: 0; }
-  .ledger .ll{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--ink-soft);
-    margin: 0 0 5px;
-    white-space: nowrap;
-  }
-  .ledger .lv{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 14px;
-    color: var(--ink);
-    white-space: nowrap;
-  }
-  .ledger .lv a{
-    color: var(--navy);
-    text-decoration: none;
-    border-bottom: 1px solid var(--rule);
-  }
+  .ledger .ll{ font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); margin: 0 0 5px; white-space: nowrap; }
+  .ledger .lv{ font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--ink); white-space: nowrap; }
+  .ledger .lv a{ color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--rule); }
   .ledger .lv a:hover{ border-bottom-color: var(--navy); }
   .lv.pos{ color: var(--pos); }
   .lv.neg{ color: var(--neg); }
   .dir-long{ color: var(--pos); }
   .dir-short{ color: var(--neg); }
-
-  .badge{
-    display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    padding: 2px 8px;
-    border-radius: 999px;
-    border: 1px solid currentColor;
-    line-height: 1.5;
-  }
+  .badge{ display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
   .badge.open{ color: var(--navy); }
   .badge.win{ color: var(--pos); }
   .badge.loss{ color: var(--neg); }
 
-  /* report block — same classes as the home page */
-  .paper-tag{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--ink-soft);
-    margin: 0 0 8px;
-  }
-  .paper-title{
-    font-family: 'Newsreader', serif;
-    font-weight: 600;
-    font-size: 25px;
-    line-height: 1.3;
-    margin: 0 0 12px;
-  }
-  .paper-desc{ color: var(--ink); margin: 0 0 16px; }
-  .paper-link{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    color: var(--navy);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border-bottom: 1px solid var(--navy);
-    padding-bottom: 1px;
-    transition: opacity 0.15s ease;
-  }
-  .paper-link:hover{ opacity: 0.6; }
-  .paper-link svg{ width: 11px; height: 11px; }
-
-  footer{
-    margin-top: 96px;
-    padding-top: 24px;
-    border-top: 1px solid var(--rule);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    color: var(--ink-soft);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+  footer{ margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
   @media (max-width: 560px){
-    .wrap{ padding: 40px 20px 90px; }
-    .name{ font-size: 32px; }
+    .wrap{ padding: 36px 20px 90px; }
+    .name{ font-size: 34px; }
+    .panel-title{ font-size: 32px; }
     .paper-title{ font-size: 22px; }
-    /* stack the stat bar 3 + 3 on small screens */
     .ledger{ grid-template-columns: repeat(3, 1fr); }
     .ledger .lc:nth-child(3){ border-right: 0; }
     .ledger .lc:nth-child(-n+3){ border-bottom: 1px solid var(--rule); }
   }
-  @media (prefers-reduced-motion: reduce){
-    *{ transition: none !important; }
-  }
+  @media (prefers-reduced-motion: reduce){ *{ transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <nav class="nav">
-    <a class="who" href="index.html">Anirudh Venkatesan</a>
+    <span class="who" data-tab="home">Anirudh Venkatesan</span>
     <span class="tabs">
-      <a href="index.html">Writing</a>
-      <a href="investments.html" class="active">Investments</a>
+      <a data-tab="home">Home</a>
+      <a data-tab="papers">Papers</a>
+      <a data-tab="investments">Investments</a>
     </span>
   </nav>
 
-  <header>
-    <h1 class="name">Investments</h1>
-    <p class="lede">
+  <!-- ===================== HOME ===================== -->
+  <section id="home" class="tab-panel">
+    <h1 class="name">Anirudh Venkatesan</h1>
+    <p class="bio">
+      Hi, I'm Ani. I'm an incoming student at the University of Virginia, planning on
+      studying economics and statistics. I'm interested in questions where common
+      assumptions and the evidence diverge, in markets and in other areas, and in
+      writing about them through research and shorter essays. Feel free to
+      reach out at <a href="mailto:qpf2aj@virginia.edu">qpf2aj@virginia.edu</a>.
+    </p>
+    <p class="links">
+      <a href="https://www.linkedin.com/in/anirudh-venkatesan/" target="_blank" rel="noopener">LinkedIn</a>
+    </p>
+  </section>
+
+  <!-- ===================== PAPERS ===================== -->
+  <section id="papers" class="tab-panel">
+    <h2 class="panel-title">Papers</h2>
+
+    <div class="papers">
+      <article class="paper">
+        <p class="paper-tag">Behavioral Finance</p>
+        <h3 class="paper-title">Does Retail Attention Predict Returns? Evidence from Robinhood "Popularity" Data, 2018 to 2020</h3>
+        <a class="paper-link" href="attention-predicts-returns.pdf" target="_blank" rel="noopener">
+          Read the paper
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+      </article>
+
+      <article class="paper">
+        <p class="paper-tag">Sports Economics</p>
+        <h3 class="paper-title">What Predicts World Cup Success?</h3>
+        <a class="paper-link" href="world-cup-success.pdf" target="_blank" rel="noopener">
+          Read the paper
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+      </article>
+
+      <article class="paper">
+        <p class="paper-tag">Housing Policy</p>
+        <h3 class="paper-title">Reforming Credit Access: Addressing Structural Exclusion in Urban Homeownership</h3>
+        <a class="paper-link" href="Reforming_Credit_Access_Academic (1).pdf" target="_blank" rel="noopener">
+          Read the paper
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== INVESTMENTS ===================== -->
+  <section id="investments" class="tab-panel">
+    <h2 class="panel-title">Investments</h2>
+    <p class="panel-lede">
       A public, dated record of the calls behind my equity work. Each position is logged
       at its entry price on the day it's made, marked to the live market, and left to play
-      out in the open — winners and losers both. The full reasoning lives in each report.
+      out in the open, winners and losers both.
     </p>
-    <div class="summary" id="summary"><!-- filled by JS --></div>
-    <p class="feed-note" id="feedNote"></p>
-  </header>
 
-  <section class="positions" id="positions"><!-- filled by JS --></section>
+    <div class="summary">
+      <div class="cell"><p class="k">Calls</p><div class="v">1</div></div>
+      <div class="cell"><p class="k">Open</p><div class="v">1</div></div>
+      <div class="cell"><p class="k">Closed</p><div class="v">0</div></div>
+      <div class="cell"><p class="k">Hit rate</p><div class="v">—</div></div>
+    </div>
+    <p class="feed-note" id="feedNote">Marked to last close. Live feed updates on load.</p>
+
+    <div class="positions">
+
+      <!-- Each position = a ledger (tracker) + its report. Copy this whole block to add another. -->
+      <article class="position" data-ticker="CI" data-direction="long" data-entry="284.80">
+        <div class="ledger">
+          <div class="lc"><p class="ll">Date</p><div class="lv">Jun 15, 2026</div></div>
+          <div class="lc"><p class="ll">Call</p><div class="lv"><span class="dir-long">LONG</span> CI</div></div>
+          <div class="lc"><p class="ll">Entry</p><div class="lv">$284.80</div></div>
+          <div class="lc"><p class="ll">Current</p><div class="lv"><a class="cur" href="https://finance.yahoo.com/quote/CI" target="_blank" rel="noopener">$285.43</a></div></div>
+          <div class="lc"><p class="ll">Return</p><div class="lv ret pos">▲ +0.2%</div></div>
+          <div class="lc"><p class="ll">Status</p><div class="lv"><span class="badge open">Open</span></div></div>
+        </div>
+        <div class="paper">
+          <p class="paper-tag">Equity Research</p>
+          <h3 class="paper-title">The Cigna Group (NYSE: CI): A Healthcare Giant Mid-Transition</h3>
+          <p class="paper-desc">
+            Cigna is the subject of conflicting analyst opinions, with one bank raising its
+            price target to $400 and another cutting to $302 off the same set of facts. This
+            report builds a discounted cash flow model off Cigna's segment-level financials
+            and historical cash conversion, landing on a $319 price target, roughly 12% above
+            the price at the time of writing. The thesis is that the market is treating a pharmacy-benefit
+            pricing shift and two business divestitures as pure downside, when they are not.
+          </p>
+          <a class="paper-link" href="Cigna_Equity_Report (2).pdf" target="_blank" rel="noopener">
+            Read the report
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </section>
 
   <footer>
     <span>(c) 2026 Anirudh Venkatesan</span>
@@ -282,66 +235,26 @@
 </div>
 
 <script>
-/* =========================================================================
-   1) LIVE PRICE FEED
-   Get a free key at https://finnhub.io/register and paste it below.
-   Without a key the page still works — it shows the last "marked" price
-   you set in each call's `manualCurrent` field (or "—" if none).
-   ========================================================================= */
+/* ============ TAB SWITCHING ============ */
+(function(){
+  const panels = document.querySelectorAll('.tab-panel');
+  const tabRow = document.querySelectorAll('.tabs a[data-tab]');
+  function showTab(name){
+    if(!document.getElementById(name)) name = 'home';
+    panels.forEach(p => p.classList.toggle('active', p.id === name));
+    tabRow.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    if(location.hash.slice(1) !== name) history.replaceState(null, '', '#' + name);
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-tab]').forEach(el => {
+    el.addEventListener('click', e => { e.preventDefault(); showTab(el.dataset.tab); });
+  });
+  window.addEventListener('hashchange', () => showTab(location.hash.slice(1) || 'home'));
+  showTab(location.hash.slice(1) || 'home');
+})();
+
+/* ============ LIVE PRICE (enhancement only — page works without it) ============ */
 const FINNHUB_KEY = "d8pv2m1r01qr03nchfm0d8pv2m1r01qr03nchfmg";
-
-/* =========================================================================
-   2) YOUR CALLS  — add a new object to the top of this array for each call.
-   direction : "long" (you expect it up) or "short" (you expect it down)
-   entry     : the real price the day you made the call (no backfilling)
-   closed    : false while live; set true and fill closePrice when it resolves
-   ========================================================================= */
-const calls = [
-  {
-    date: "2026-06-15",          // TODO: set to the actual day you made this call
-    ticker: "CI",
-    direction: "long",
-    entry: 284.80,               // TODO: set your real entry (≈ $319 target / 1.12)
-    closed: false,
-    closePrice: null,
-    manualCurrent: null,         // optional fallback if the live feed is off
-    target: 319,
-    tag: "Equity Research",
-    title: "The Cigna Group (NYSE: CI): A Healthcare Giant Mid-Transition",
-    desc: "A DCF built off Cigna's segment-level financials and historical cash conversion lands on a $319 price target, ~12% above the price at the time of writing. The thesis: the market is treating a pharmacy-benefit pricing shift and two divestitures as pure downside when they are not.",
-    url: "Cigna_Equity_Report (2).pdf"
-  }
-
-  /* ---- TEMPLATE: copy this for your next call (e.g. a short) ----
-  ,{
-    date: "2026-09-01",
-    ticker: "XYZ",
-    direction: "short",
-    entry: 120.00,
-    closed: false,
-    closePrice: null,
-    manualCurrent: null,
-    target: 90,
-    tag: "Equity Research",
-    title: "XYZ (NASDAQ: XYZ): Short — <one-line hook>",
-    desc: "One-paragraph summary of the thesis and the catalyst.",
-    url: "xyz-report.pdf"
-  }
-  */
-];
-
-/* ========================== rendering logic ============================= */
-const fmtUSD = n => (n==null ? "—" : "$" + Number(n).toFixed(2));
-const fmtPct = r => (r==null ? "—" : (r>=0?"+":"") + (r*100).toFixed(1) + "%");
-const fmtDate = s => {
-  const d = new Date(s + "T00:00:00");
-  return isNaN(d) ? s : d.toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"});
-};
-
-function signedReturn(c, price){
-  if(price==null) return null;
-  return c.direction === "short" ? (c.entry - price)/c.entry : (price - c.entry)/c.entry;
-}
 
 async function fetchPrice(ticker){
   if(!FINNHUB_KEY || FINNHUB_KEY === "YOUR_FINNHUB_KEY") return null;
@@ -352,92 +265,33 @@ async function fetchPrice(ticker){
   }catch(e){ return null; }
 }
 
-function ledgerHTML(c, current){
-  const price = c.closed ? c.closePrice : current;
-  const ret = signedReturn(c, price);
-  const retCls = ret==null ? "" : (ret>=0 ? "pos" : "neg");
-  const arrow = ret==null ? "" : (ret>=0 ? "▲ " : "▼ ");
-
-  // current cell — links to the live quote
-  const quote = `https://finance.yahoo.com/quote/${c.ticker}`;
-  let currentCell;
-  if(c.closed){
-    currentCell = `<a href="${quote}" target="_blank" rel="noopener">${fmtUSD(c.closePrice)}</a> <span style="color:var(--ink-soft)">· closed</span>`;
-  }else{
-    currentCell = `<a href="${quote}" target="_blank" rel="noopener">${fmtUSD(current)}</a>`;
+(async function liveUpdate(){
+  const positions = document.querySelectorAll('.position[data-ticker]');
+  if(!positions.length) return;
+  let updated = false;
+  for(const pos of positions){
+    const ticker = pos.dataset.ticker;
+    const dir = pos.dataset.direction;
+    const entry = parseFloat(pos.dataset.entry);
+    const price = await fetchPrice(ticker);
+    if(price == null) continue;
+    updated = true;
+    const ret = dir === 'short' ? (entry - price)/entry : (price - entry)/entry;
+    const curEl = pos.querySelector('.cur');
+    if(curEl) curEl.textContent = '$' + price.toFixed(2);
+    const retEl = pos.querySelector('.ret');
+    if(retEl){
+      const arrow = ret >= 0 ? '▲ ' : '▼ ';
+      const sign  = ret >= 0 ? '+' : '';
+      retEl.textContent = arrow + sign + (ret*100).toFixed(1) + '%';
+      retEl.classList.toggle('pos', ret >= 0);
+      retEl.classList.toggle('neg', ret < 0);
+    }
   }
-
-  // status badge
-  let badge;
-  if(c.closed){
-    badge = ret>=0 ? `<span class="badge win">Closed ✓</span>` : `<span class="badge loss">Closed ✗</span>`;
-  }else{
-    badge = `<span class="badge open">Open</span>`;
-  }
-
-  const dirCls = c.direction === "short" ? "dir-short" : "dir-long";
-  const callLabel = `<span class="${dirCls}">${c.direction.toUpperCase()}</span> ${c.ticker}`;
-
-  return `
-    <div class="ledger">
-      <div class="lc"><p class="ll">Date</p><div class="lv">${fmtDate(c.date)}</div></div>
-      <div class="lc"><p class="ll">Call</p><div class="lv">${callLabel}</div></div>
-      <div class="lc"><p class="ll">Entry</p><div class="lv">${fmtUSD(c.entry)}</div></div>
-      <div class="lc"><p class="ll">Current</p><div class="lv">${currentCell}</div></div>
-      <div class="lc"><p class="ll">Return</p><div class="lv ${retCls}">${arrow}${fmtPct(ret)}</div></div>
-      <div class="lc"><p class="ll">Status</p><div class="lv">${badge}</div></div>
-    </div>`;
-}
-
-function reportHTML(c){
-  return `
-    <p class="paper-tag">${c.tag}</p>
-    <h2 class="paper-title">${c.title}</h2>
-    <p class="paper-desc">${c.desc}</p>
-    <a class="paper-link" href="${c.url}" target="_blank" rel="noopener">
-      Read the report
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-    </a>`;
-}
-
-function renderSummary(currents){
-  const total = calls.length;
-  const open = calls.filter(c => !c.closed).length;
-  const closed = calls.filter(c => c.closed);
-  const wins = closed.filter(c => signedReturn(c, c.closePrice) >= 0).length;
-  const winRate = closed.length ? Math.round(100*wins/closed.length) + "%" : "—";
-
-  document.getElementById("summary").innerHTML = `
-    <div class="cell"><p class="k">Calls</p><div class="v">${total}</div></div>
-    <div class="cell"><p class="k">Open</p><div class="v">${open}</div></div>
-    <div class="cell"><p class="k">Closed</p><div class="v">${closed.length}</div></div>
-    <div class="cell"><p class="k">Hit rate</p><div class="v">${winRate}</div></div>`;
-}
-
-function render(currents){
-  document.getElementById("positions").innerHTML = calls.map((c,i) =>
-    `<article class="position">${ledgerHTML(c, currents[i])}<div class="paper">${reportHTML(c)}</div></article>`
-  ).join("");
-  renderSummary(currents);
-}
-
-(async function init(){
-  // first paint with fallback prices so the page is never blank
-  let currents = calls.map(c => c.closed ? c.closePrice : c.manualCurrent);
-  render(currents);
-
-  const live = (FINNHUB_KEY && FINNHUB_KEY !== "YOUR_FINNHUB_KEY");
-  const note = document.getElementById("feedNote");
-  if(!live){
-    note.textContent = "Live feed off — showing last marked prices. Add a Finnhub key to pull live quotes.";
-    return;
-  }
-  note.textContent = "Fetching live prices…";
-
-  // fetch live prices for open positions, then re-render
-  currents = await Promise.all(calls.map(c => c.closed ? Promise.resolve(c.closePrice) : fetchPrice(c.ticker)));
-  render(currents);
-  note.textContent = "Live prices via Finnhub · updated " + new Date().toLocaleString("en-US");
+  const note = document.getElementById('feedNote');
+  if(note) note.textContent = updated
+    ? 'Live prices via Finnhub · updated ' + new Date().toLocaleString('en-US')
+    : 'Marked to last close. Live feed unavailable right now.';
 })();
 </script>
 </body>
