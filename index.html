@@ -102,6 +102,22 @@
   .badge.win{ color: var(--pos); }
   .badge.loss{ color: var(--neg); }
 
+  /* ---------- unified tracker table ---------- */
+  .tracker{ border: 1px solid var(--rule); border-radius: 2px; background: #FBF9F3; margin-bottom: 48px; overflow: hidden; }
+  .tracker-head{ display: grid; grid-template-columns: 88px 110px 72px 72px 72px 68px 72px; border-bottom: 2px solid var(--rule); }
+  .tracker-row{ display: grid; grid-template-columns: 88px 110px 72px 72px 72px 68px 72px; border-top: 1px solid var(--rule); }
+  .tracker-row:first-of-type{ border-top: 0; }
+  .tracker-row.pair-divider{ border-top: 1px dashed var(--rule); }
+  .tracker-row.pair-divider:first-of-type{ border-top: 0; }
+  .tc{ padding: 10px 12px; border-right: 1px solid var(--rule); overflow: hidden; }
+  .tc:last-child{ border-right: 0; }
+  .th{ font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); white-space: nowrap; }
+  .tv{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink); white-space: nowrap; }
+  .tv a{ color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .tv a:hover{ border-bottom-color: var(--navy); }
+  .tv.pos{ color: var(--pos); }
+  .tv.neg{ color: var(--neg); }
+
   footer{ margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
   @media (max-width: 560px){
@@ -112,6 +128,11 @@
     .ledger{ grid-template-columns: repeat(3, 1fr); }
     .ledger .lc:nth-child(3){ border-right: 0; }
     .ledger .lc:nth-child(-n+3){ border-bottom: 1px solid var(--rule); }
+    .tracker-head,
+    .tracker-row{ grid-template-columns: 70px 90px 60px 60px 60px 52px 60px; }
+    .tc{ padding: 8px 8px; }
+    .th{ font-size: 8.5px; }
+    .tv{ font-size: 12px; }
   }
   @media (prefers-reduced-motion: reduce){ *{ transition: none !important; animation: none !important; } }
 </style>
@@ -174,6 +195,21 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
         </a>
       </article>
+
+      <article class="paper">
+        <p class="paper-tag">Equity Research · Pair Trade</p>
+        <h3 class="paper-title">Long Texas Roadhouse, Short Cava</h3>
+        <p class="paper-desc">
+          A market-neutral paired position built on the growing gap between value and premium dining in 2026.
+          Texas Roadhouse is long on traffic-driven comparable sales growth; Cava is short on a valuation that
+          has run well ahead of the cash the business produces. The position profits on the spread, not the
+          direction of the sector.
+        </p>
+        <a class="paper-link" href="Pair_Trade_TXRH_CAVA.pdf" target="_blank" rel="noopener">
+          Read the report
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+      </article>
     </div>
   </section>
 
@@ -187,41 +223,98 @@
     </p>
 
     <div class="summary">
-      <div class="cell"><p class="k">Calls</p><div class="v">1</div></div>
-      <div class="cell"><p class="k">Open</p><div class="v">1</div></div>
+      <div class="cell"><p class="k">Calls</p><div class="v">2</div></div>
+      <div class="cell"><p class="k">Open</p><div class="v">2</div></div>
       <div class="cell"><p class="k">Closed</p><div class="v">0</div></div>
       <div class="cell"><p class="k">Hit rate</p><div class="v">—</div></div>
     </div>
     <p class="feed-note" id="feedNote">Marked to last close. Live feed updates on load.</p>
 
+    <!-- ── unified tracker table ── -->
+    <div class="tracker" style="margin-top: 24px;">
+      <div class="tracker-head">
+        <div class="tc"><span class="th">Date</span></div>
+        <div class="tc"><span class="th">Position</span></div>
+        <div class="tc"><span class="th">Side</span></div>
+        <div class="tc"><span class="th">Entry</span></div>
+        <div class="tc"><span class="th">Current</span></div>
+        <div class="tc"><span class="th">Return</span></div>
+        <div class="tc"><span class="th">Status</span></div>
+      </div>
+
+      <!-- TXRH long leg -->
+      <div class="tracker-row" data-ticker="TXRH" data-direction="long" data-entry="177.75">
+        <div class="tc"><div class="tv">Jun 20</div></div>
+        <div class="tc"><div class="tv"><a href="https://finance.yahoo.com/quote/TXRH" target="_blank" rel="noopener">TXRH</a></div></div>
+        <div class="tc"><div class="tv dir-long">Long</div></div>
+        <div class="tc"><div class="tv">$177.75</div></div>
+        <div class="tc"><div class="tv cur-TXRH">$177.75</div></div>
+        <div class="tc"><div class="tv ret-TXRH">—</div></div>
+        <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
+      </div>
+
+      <!-- CAVA short leg (pair with TXRH) -->
+      <div class="tracker-row pair-divider" data-ticker="CAVA" data-direction="short" data-entry="95.00">
+        <div class="tc"><div class="tv" style="color:var(--ink-soft);">↳ pair</div></div>
+        <div class="tc"><div class="tv"><a href="https://finance.yahoo.com/quote/CAVA" target="_blank" rel="noopener">CAVA</a></div></div>
+        <div class="tc"><div class="tv dir-short">Short</div></div>
+        <div class="tc"><div class="tv">$95.00</div></div>
+        <div class="tc"><div class="tv cur-CAVA">$95.00</div></div>
+        <div class="tc"><div class="tv ret-CAVA">—</div></div>
+        <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
+      </div>
+
+      <!-- CI long -->
+      <div class="tracker-row" data-ticker="CI" data-direction="long" data-entry="284.80">
+        <div class="tc"><div class="tv">Jun 15</div></div>
+        <div class="tc"><div class="tv"><a href="https://finance.yahoo.com/quote/CI" target="_blank" rel="noopener">CI</a></div></div>
+        <div class="tc"><div class="tv dir-long">Long</div></div>
+        <div class="tc"><div class="tv">$284.80</div></div>
+        <div class="tc"><div class="tv cur-CI">$285.43</div></div>
+        <div class="tc"><div class="tv ret-CI pos">▲ +0.2%</div></div>
+        <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
+      </div>
+    </div>
+
+    <!-- ── position writeups ── -->
     <div class="positions">
 
-      <!-- Each position = a ledger (tracker) + its report. Copy this whole block to add another. -->
-      <article class="position" data-ticker="CI" data-direction="long" data-entry="284.80">
-        <div class="ledger">
-          <div class="lc"><p class="ll">Date</p><div class="lv">Jun 15, 2026</div></div>
-          <div class="lc"><p class="ll">Call</p><div class="lv"><span class="dir-long">LONG</span> CI</div></div>
-          <div class="lc"><p class="ll">Entry</p><div class="lv">$284.80</div></div>
-          <div class="lc"><p class="ll">Current</p><div class="lv"><a class="cur" href="https://finance.yahoo.com/quote/CI" target="_blank" rel="noopener">$285.43</a></div></div>
-          <div class="lc"><p class="ll">Return</p><div class="lv ret pos">▲ +0.2%</div></div>
-          <div class="lc"><p class="ll">Status</p><div class="lv"><span class="badge open">Open</span></div></div>
-        </div>
-        <div class="paper">
-          <p class="paper-tag">Equity Research</p>
-          <h3 class="paper-title">The Cigna Group (NYSE: CI): A Healthcare Giant Mid-Transition</h3>
-          <p class="paper-desc">
-            Cigna is the subject of conflicting analyst opinions, with one bank raising its
-            price target to $400 and another cutting to $302 off the same set of facts. This
-            report builds a discounted cash flow model off Cigna's segment-level financials
-            and historical cash conversion, landing on a $319 price target, roughly 12% above
-            the price at the time of writing. The thesis is that the market is treating a pharmacy-benefit
-            pricing shift and two business divestitures as pure downside, when they are not.
-          </p>
-          <a class="paper-link" href="Cigna_Equity_Report (2).pdf" target="_blank" rel="noopener">
-            Read the report
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-          </a>
-        </div>
+      <!-- TXRH / CAVA -->
+      <article class="paper">
+        <p class="paper-tag">Equity Research · Pair Trade · Jun 20, 2026</p>
+        <h3 class="paper-title">Long Texas Roadhouse, Short Cava</h3>
+        <p class="paper-desc">
+          This is a market-neutral paired position that holds Texas Roadhouse long and Cava short in equal dollar amounts,
+          so it makes money only if Texas Roadhouse outperforms Cava regardless of where the sector goes.
+          The case rests on a split in the 2026 consumer. Texas Roadhouse posted 7.1% comparable sales growth
+          on 4.5% traffic growth in Q1, which is the better kind of comp because it comes from more guests rather
+          than price alone, and it still trades about 10% below its 52-week high. Cava, meanwhile, has run roughly
+          54% in six months and now trades well above what the business currently earns, at the exact moment the
+          premium end of the restaurant market faces the most consumer pressure. Both companies report Q2 results
+          in August, with Cava due on August 11, which is the main near-term catalyst for the spread.
+        </p>
+        <a class="paper-link" href="Pair_Trade_TXRH_CAVA.pdf" target="_blank" rel="noopener">
+          Read the report
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+      </article>
+
+      <!-- CI -->
+      <article class="paper">
+        <p class="paper-tag">Equity Research · Jun 15, 2026</p>
+        <h3 class="paper-title">The Cigna Group (NYSE: CI): A Healthcare Giant Mid-Transition</h3>
+        <p class="paper-desc">
+          Cigna has become the subject of unusually wide disagreement on the Street, with one bank raising its
+          price target to $400 and another cutting to $302 off the same set of facts. This report builds a
+          discounted cash flow model from Cigna's segment-level financials and historical cash conversion,
+          arriving at a $319 price target, roughly 12% above where the stock traded at the time of writing.
+          The thesis is that the market is treating a pharmacy-benefit pricing shift and two business divestitures
+          as pure downside when the underlying cash generation tells a different story.
+        </p>
+        <a class="paper-link" href="Cigna_Equity_Report (2).pdf" target="_blank" rel="noopener">
+          Read the report
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
       </article>
 
     </div>
@@ -265,29 +358,40 @@ async function fetchPrice(ticker){
   }catch(e){ return null; }
 }
 
+function formatRet(ret, dir){
+  const r = dir === 'short' ? -ret : ret;
+  const arrow = r >= 0 ? '▲ ' : '▼ ';
+  const sign  = r >= 0 ? '+' : '';
+  return { text: arrow + sign + (r * 100).toFixed(1) + '%', pos: r >= 0 };
+}
+
 (async function liveUpdate(){
-  const positions = document.querySelectorAll('.position[data-ticker]');
-  if(!positions.length) return;
+  const rows = document.querySelectorAll('.tracker-row[data-ticker]');
   let updated = false;
-  for(const pos of positions){
-    const ticker = pos.dataset.ticker;
-    const dir = pos.dataset.direction;
-    const entry = parseFloat(pos.dataset.entry);
-    const price = await fetchPrice(ticker);
+
+  for(const row of rows){
+    const ticker = row.dataset.ticker;
+    const dir    = row.dataset.direction;
+    const entry  = parseFloat(row.dataset.entry);
+    const price  = await fetchPrice(ticker);
     if(price == null) continue;
     updated = true;
-    const ret = dir === 'short' ? (entry - price)/entry : (price - entry)/entry;
-    const curEl = pos.querySelector('.cur');
+
+    /* current price */
+    const curEl = row.querySelector('.cur-' + ticker);
     if(curEl) curEl.textContent = '$' + price.toFixed(2);
-    const retEl = pos.querySelector('.ret');
+
+    /* return — short leg gains when price falls */
+    const raw = dir === 'short' ? (entry - price) / entry : (price - entry) / entry;
+    const retEl = row.querySelector('.ret-' + ticker);
     if(retEl){
-      const arrow = ret >= 0 ? '▲ ' : '▼ ';
-      const sign  = ret >= 0 ? '+' : '';
-      retEl.textContent = arrow + sign + (ret*100).toFixed(1) + '%';
-      retEl.classList.toggle('pos', ret >= 0);
-      retEl.classList.toggle('neg', ret < 0);
+      const arrow = raw >= 0 ? '▲ ' : '▼ ';
+      const sign  = raw >= 0 ? '+' : '';
+      retEl.textContent = arrow + sign + (raw * 100).toFixed(1) + '%';
+      retEl.className = 'tv ret-' + ticker + (raw >= 0 ? ' pos' : ' neg');
     }
   }
+
   const note = document.getElementById('feedNote');
   if(note) note.textContent = updated
     ? 'Live prices via Finnhub · updated ' + new Date().toLocaleString('en-US')
