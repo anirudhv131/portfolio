@@ -187,6 +187,7 @@
       <a data-tab="papers">Papers</a>
       <a data-tab="investments">Investments</a>
       <a data-tab="markets">Prediction Markets</a>
+      <a data-tab="arbitrage">Arbitrage</a>
     </span>
   </nav>
 
@@ -452,6 +453,89 @@
       <div id="mkt-cats"></div>
     </div>
   </section>
+
+  <section id="arbitrage" class="tab-panel">
+    <style>
+      .arb-controls{ display:flex; flex-wrap:wrap; gap:18px; align-items:center; margin-top:6px; }
+      .arb-ctl{ display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.09em; color:var(--ink-soft); }
+      .arb-ctl select{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--navy); background:#FBF9F3; border:1px solid var(--rule); border-radius:2px; padding:3px 6px; }
+      #arb-refresh, #arb-clear{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--navy); text-decoration:none; border-bottom:1px solid var(--rule); cursor:pointer; }
+      #arb-refresh:hover, #arb-clear:hover{ border-bottom-color:var(--navy); }
+      .arb-track{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--navy); background:none; border:1px solid var(--rule); border-radius:999px; padding:2px 10px; cursor:pointer; line-height:1.5; }
+      .arb-track:hover{ border-color:var(--navy); }
+      .arb-track.tracked{ color:var(--ink-soft); border-style:dashed; cursor:default; }
+    </style>
+
+    <h2 class="panel-title">Arbitrage</h2>
+    <p class="panel-lede">
+      A live scan for prices that don't add up. The cleanest test is on a single market: a YES
+      share and a NO share must together be worth exactly $1 at settlement, so if both sides are
+      buyable for under $1, the difference is locked in. The second test compares the same event
+      across Polymarket and Kalshi, where the matching is fuzzier and the edge is rarely real.
+      Everything here is gross of the things that eat these edges in practice, fees, gas, slippage,
+      and the chance two markets don't settle the same way. Treat it as a screen, not a signal.
+    </p>
+
+    <div class="arb-controls">
+      <span class="arb-ctl"><label for="arb-minedge">Min net edge</label>
+        <select id="arb-minedge">
+          <option value="0.25">0.25%</option>
+          <option value="0.5">0.5%</option>
+          <option value="1" selected>1%</option>
+          <option value="2">2%</option>
+        </select></span>
+      <span class="arb-ctl"><label for="arb-fee">Fee + slip buffer</label>
+        <select id="arb-fee">
+          <option value="0">0%</option>
+          <option value="1">1%</option>
+          <option value="1.5" selected>1.5%</option>
+          <option value="3">3%</option>
+        </select></span>
+      <a id="arb-refresh">Rescan</a>
+    </div>
+
+    <div class="summary" style="margin-top:20px;">
+      <div class="cell"><p class="k">Markets scanned</p><div class="v" id="arb-scanned">&mdash;</div></div>
+      <div class="cell"><p class="k">Bundle edges</p><div class="v" id="arb-bundle-n">&mdash;</div></div>
+      <div class="cell"><p class="k">Cross-platform</p><div class="v" id="arb-cross-n">&mdash;</div></div>
+      <div class="cell"><p class="k">Best net edge</p><div class="v" id="arb-best">&mdash;</div></div>
+    </div>
+    <p class="feed-note" id="arb-stamp">Loads live the first time you open this tab. Net edge is after the buffer above.</p>
+
+    <div class="mkt-section">
+      <p class="paper-tag">Same market &middot; YES + NO under $1</p>
+      <h3 class="mkt-h">Bundle mispricings</h3>
+      <p class="mkt-note">Single-platform gaps where buying or selling both sides locks in a difference.
+        Size is the shares available at the quoted price, which is the real limit on how much edge is
+        actually there. These are rare; an empty table is the normal, efficient state.</p>
+      <div id="arb-bundle"><p class="mkt-state dots">Waiting to scan</p></div>
+    </div>
+
+    <div class="mkt-section">
+      <p class="paper-tag">Same event &middot; two sites</p>
+      <h3 class="mkt-h">Cross-platform spreads</h3>
+      <p class="mkt-note">Polymarket markets paired to a Kalshi market by text similarity, where the two
+        crowds disagree on the odds. The match is approximate and the two legs can't be settled against
+        each other, so read these as questions worth checking, not trades.</p>
+      <div id="arb-cross"><p class="mkt-state">&mdash;</p></div>
+    </div>
+
+    <div class="mkt-section">
+      <p class="paper-tag">Tracked &middot; dated &middot; marked to live</p>
+      <h3 class="mkt-h">Arbitrage portfolio</h3>
+      <p class="mkt-note">Opportunities you choose to log, kept in this browser and re-checked on every
+        scan. Each is stamped with the edge at entry and marked to whatever the edge is now; when it
+        disappears, the row closes. <a id="arb-clear">Clear all</a></p>
+      <div class="summary" style="margin-bottom:18px;">
+        <div class="cell"><p class="k">Tracked</p><div class="v" id="arb-pf-n">0</div></div>
+        <div class="cell"><p class="k">Open</p><div class="v" id="arb-pf-open">0</div></div>
+        <div class="cell"><p class="k">Closed</p><div class="v" id="arb-pf-closed">0</div></div>
+        <div class="cell"><p class="k">Avg entry edge</p><div class="v" id="arb-pf-avg">&mdash;</div></div>
+      </div>
+      <div id="arb-portfolio"><p class="mkt-state">Nothing tracked yet. Use Track on any row above to log it here.</p></div>
+    </div>
+  </section>
+
 
   <footer>
     <span>(c) 2026 Anirudh Venkatesan</span>
@@ -1182,5 +1266,349 @@ function formatRet(ret, dir){
 })();
 
 </script>
+<script>
+/* ============ ARBITRAGE TAB (self-contained) ============ */
+(function(){
+  const GAMMA = "https://gamma-api.polymarket.com";
+  const CLOB  = "https://clob.polymarket.com";
+  const KAL_HOSTS = ["https://api.elections.kalshi.com/trade-api/v2","https://external-api.kalshi.com/trade-api/v2"];
+  const PF_KEY = "arbPortfolio.v1";
+
+  let started = false;
+  let busy = false;
+  let lastBundle = [];
+  let lastCross = [];
+
+  /* ---------- helpers ---------- */
+  const setText = (id,t)=>{ const n=document.getElementById(id); if(n) n.textContent=t; };
+  const setHTML = (id,h)=>{ const n=document.getElementById(id); if(n) n.innerHTML=h; };
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+  function clip(s,n){ s=String(s||""); return s.length>n ? s.slice(0,n-1)+"\u2026" : s; }
+  function cents(p){ return (Number(p)*100).toFixed(1)+"\u00A2"; }
+  function pctTxt(x){ return (Number(x)*100).toFixed(2)+"%"; }
+  function signedPct(x){ const v=Number(x)*100; return (v>=0?"+":"")+v.toFixed(2)+"%"; }
+  function todayStr(){ return new Date().toLocaleDateString("en-US",{month:"short",day:"numeric"}); }
+  function nowStamp(){ return new Date().toLocaleString("en-US",{hour:"numeric",minute:"2-digit"}); }
+
+  function feeBuf(){ const el=document.getElementById("arb-fee"); return el ? Number(el.value)/100 : 0.015; }
+  function minEdge(){ const el=document.getElementById("arb-minedge"); return el ? Number(el.value)/100 : 0.01; }
+
+  async function getJSON(url, timeout){
+    const ctrl=new AbortController();
+    const t=setTimeout(()=>ctrl.abort(), timeout||12000);
+    try{
+      const r=await fetch(url,{ signal:ctrl.signal, headers:{ accept:"application/json" } });
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      return await r.json();
+    } finally { clearTimeout(t); }
+  }
+  async function pool(items, width, fn){
+    const out=new Array(items.length); let i=0;
+    async function worker(){ while(i<items.length){ const idx=i++; try{ out[idx]=await fn(items[idx], idx); }catch(e){ out[idx]=null; } } }
+    const n=Math.min(width, items.length)||0; const ws=[];
+    for(let k=0;k<n;k++) ws.push(worker());
+    await Promise.all(ws); return out;
+  }
+  function parseArr(v){
+    if(Array.isArray(v)) return v;
+    if(typeof v==="string"){ try{ const p=JSON.parse(v); return Array.isArray(p)?p:[]; }catch(e){ return []; } }
+    return [];
+  }
+
+  /* ---------- portfolio persistence ---------- */
+  function loadPF(){ try{ return JSON.parse(localStorage.getItem(PF_KEY)||"[]"); }catch(e){ return []; } }
+  function savePF(a){ try{ localStorage.setItem(PF_KEY, JSON.stringify(a)); }catch(e){} }
+
+  /* ---------- Polymarket markets (both token ids + prob) ---------- */
+  async function loadPolyMarkets(limit){
+    const base=GAMMA+"/markets?active=true&closed=false&limit="+(limit||60);
+    let res;
+    try{ res=await getJSON(base+"&order=volume24hr&ascending=false"); }
+    catch(e){ res=await getJSON(base); }
+    const arr=Array.isArray(res)?res:(res&&res.data)||[];
+    return arr.map(m=>{
+      const tok=parseArr(m.clobTokenIds);
+      const op=parseArr(m.outcomePrices).map(parseFloat);
+      let prob = (op.length && isFinite(op[0])) ? op[0] : Number(m.lastTradePrice);
+      return {
+        platform:"Polymarket",
+        q:m.question||m.title||m.groupItemTitle||"Market",
+        slug:m.slug||"",
+        vol:Number(m.volume24hr)||Number(m.volumeNum)||Number(m.volume)||0,
+        prob:isFinite(prob)?prob:NaN,
+        yesTok:tok[0]||null, noTok:tok[1]||null
+      };
+    }).filter(m=>m.yesTok && m.noTok)
+      .sort((a,b)=>b.vol-a.vol);
+  }
+
+  /* ---------- order book best bid / ask ---------- */
+  async function book(tokenId){
+    const b=await getJSON(CLOB+"/book?token_id="+encodeURIComponent(tokenId), 9000);
+    const bids=(b&&b.bids)||[], asks=(b&&b.asks)||[];
+    let bb=null, bbs=0, ba=null, bas=0;
+    for(const o of bids){ const p=parseFloat(o.price), s=parseFloat(o.size)||0; if(p>0 && (bb===null||p>bb)){ bb=p; bbs=s; } }
+    for(const o of asks){ const p=parseFloat(o.price), s=parseFloat(o.size)||0; if(p>0 && (ba===null||p<ba)){ ba=p; bas=s; } }
+    return { bb, bbs, ba, bas };
+  }
+
+  /* ---------- bundle arbitrage scan ---------- */
+  async function scanBundle(markets){
+    const top=markets.slice(0,36);
+    const res=await pool(top, 6, async (m)=>{
+      const [y,n]=await Promise.all([book(m.yesTok), book(m.noTok)]);
+      if(!y||!n) return null;
+      const ops=[];
+      if(y.ba!=null && n.ba!=null){
+        const cost=y.ba+n.ba, gross=1-cost;
+        if(gross>0) ops.push({ side:"Buy both", cost, gross, net:gross-feeBuf(), size:Math.min(y.bas,n.bas) });
+      }
+      if(y.bb!=null && n.bb!=null){
+        const proceeds=y.bb+n.bb, gross=proceeds-1;
+        if(gross>0) ops.push({ side:"Sell both", cost:proceeds, gross, net:gross-feeBuf(), size:Math.min(y.bbs,n.bbs) });
+      }
+      return ops.map(o=>({ ...o, q:m.q, slug:m.slug, platform:"Polymarket" }));
+    });
+    const rows=[];
+    for(const r of res){ if(r) for(const o of r) rows.push(o); }
+    return rows.filter(r=>r.net>=minEdge()).sort((a,b)=>b.net-a.net);
+  }
+
+  /* ---------- Kalshi markets ---------- */
+  async function loadKalshi(limit){
+    for(const h of KAL_HOSTS){
+      try{
+        const res=await getJSON(h+"/markets?status=open&limit="+(limit||120), 8000);
+        const arr=(res&&res.markets)||[];
+        if(!arr.length) continue;
+        return arr.map(m=>{
+          let p=Number(m.last_price);
+          if(!isFinite(p)||p<=0){ const bid=Number(m.yes_bid), ask=Number(m.yes_ask); if(isFinite(bid)&&isFinite(ask)&&(bid||ask)) p=(bid+ask)/2; }
+          if(p>1.5) p=p/100;
+          return { platform:"Kalshi", q:m.title||m.ticker||"Market", slug:m.ticker||"", prob:p };
+        }).filter(m=>isFinite(m.prob)&&m.prob>0&&m.prob<1);
+      }catch(e){ /* try next host */ }
+    }
+    return [];
+  }
+
+  /* ---------- text similarity for cross-platform matching ---------- */
+  const STOP=new Set("the a an of to in on for and or will be is are at by vs with this that what who when which how".split(" "));
+  function wordset(s){
+    return new Set(String(s||"").toLowerCase().replace(/[^a-z0-9 ]/g," ").split(/\s+/).filter(w=>w.length>2 && !STOP.has(w)));
+  }
+  function jaccard(a,b){
+    if(!a.size||!b.size) return 0;
+    let inter=0; for(const w of a) if(b.has(w)) inter++;
+    return inter/(a.size+b.size-inter);
+  }
+  function scanCross(poly, kalshi){
+    const kal=kalshi.map(k=>({ ...k, ws:wordset(k.q) }));
+    const out=[];
+    for(const p of poly){
+      if(!isFinite(p.prob)) continue;
+      const pw=wordset(p.q); let best=null, bestS=0;
+      for(const k of kal){ const s=jaccard(pw,k.ws); if(s>bestS){ bestS=s; best=k; } }
+      if(best && bestS>=0.5){
+        const spread=Math.abs(p.prob-best.prob);
+        const net=spread-2*feeBuf();
+        if(net>=minEdge()){
+          out.push({ q:p.q, slug:p.slug, polyProb:p.prob, kalQ:best.q, kalProb:best.prob, spread, net, match:bestS });
+        }
+      }
+    }
+    return out.sort((a,b)=>b.net-a.net).slice(0,14);
+  }
+
+  /* ---------- rendering: bundle ---------- */
+  const BCOLS="minmax(0,1fr) 78px 64px 66px 66px 60px 84px";
+  function renderBundle(rows){
+    const box=document.getElementById("arb-bundle"); if(!box) return;
+    if(!rows.length){ box.innerHTML='<p class="mkt-state">No bundle mispricings clear the threshold right now. The markets are pricing YES + NO to about a dollar, which is the normal, efficient state.</p>'; return; }
+    let h='<div class="mtab"><div class="mtab-row mtab-head" style="grid-template-columns:'+BCOLS+'">'
+      +'<div class="mc"><span class="mh">Market</span></div>'
+      +'<div class="mc"><span class="mh">Action</span></div>'
+      +'<div class="mc"><span class="mh">Cost</span></div>'
+      +'<div class="mc"><span class="mh">Gross</span></div>'
+      +'<div class="mc"><span class="mh">Net</span></div>'
+      +'<div class="mc"><span class="mh">Size</span></div>'
+      +'<div class="mc"><span class="mh"></span></div></div>';
+    rows.forEach((r,i)=>{
+      const link=r.slug?('<a href="https://polymarket.com/market/'+esc(r.slug)+'" target="_blank" rel="noopener">'+esc(clip(r.q,52))+'</a>'):esc(clip(r.q,52));
+      h+='<div class="mtab-row" style="grid-template-columns:'+BCOLS+'">'
+        +'<div class="mc"><span class="mv">'+link+'</span></div>'
+        +'<div class="mc"><span class="mv">'+esc(r.side)+'</span></div>'
+        +'<div class="mc"><span class="mv">'+cents(r.cost)+'</span></div>'
+        +'<div class="mc"><span class="mv">'+pctTxt(r.gross)+'</span></div>'
+        +'<div class="mc"><span class="mv '+(r.net>=0?"pos":"neg")+'">'+signedPct(r.net)+'</span></div>'
+        +'<div class="mc"><span class="mv">'+(r.size?Math.floor(r.size):"\u2014")+'</span></div>'
+        +'<div class="mc">'+trackBtn("bundle",i)+'</div></div>';
+    });
+    box.innerHTML=h+'</div>';
+  }
+
+  /* ---------- rendering: cross ---------- */
+  const CCOLS="minmax(0,1fr) 58px 58px 64px 66px 56px 84px";
+  function renderCross(rows){
+    const box=document.getElementById("arb-cross"); if(!box) return;
+    if(!rows.length){ box.innerHTML='<p class="mkt-state">No cross-platform spreads above the threshold, or Kalshi data is unavailable. Disagreements this large between two open markets on the same event are uncommon.</p>'; return; }
+    let h='<div class="mtab"><div class="mtab-row mtab-head" style="grid-template-columns:'+CCOLS+'">'
+      +'<div class="mc"><span class="mh">Event (Polymarket)</span></div>'
+      +'<div class="mc"><span class="mh">Poly</span></div>'
+      +'<div class="mc"><span class="mh">Kalshi</span></div>'
+      +'<div class="mc"><span class="mh">Spread</span></div>'
+      +'<div class="mc"><span class="mh">Net</span></div>'
+      +'<div class="mc"><span class="mh">Match</span></div>'
+      +'<div class="mc"><span class="mh"></span></div></div>';
+    rows.forEach((r,i)=>{
+      const link=r.slug?('<a href="https://polymarket.com/market/'+esc(r.slug)+'" target="_blank" rel="noopener">'+esc(clip(r.q,46))+'</a>'):esc(clip(r.q,46));
+      h+='<div class="mtab-row" style="grid-template-columns:'+CCOLS+'" title="'+esc("Kalshi: "+r.kalQ)+'">'
+        +'<div class="mc"><span class="mv">'+link+'</span></div>'
+        +'<div class="mc"><span class="mv">'+cents(r.polyProb)+'</span></div>'
+        +'<div class="mc"><span class="mv">'+cents(r.kalProb)+'</span></div>'
+        +'<div class="mc"><span class="mv">'+pctTxt(r.spread)+'</span></div>'
+        +'<div class="mc"><span class="mv '+(r.net>=0?"pos":"neg")+'">'+signedPct(r.net)+'</span></div>'
+        +'<div class="mc"><span class="mv">'+(r.match*100).toFixed(0)+'%</span></div>'
+        +'<div class="mc">'+trackBtn("cross",i)+'</div></div>';
+    });
+    box.innerHTML=h+'</div>';
+  }
+
+  function trackBtn(kind,i){
+    const pf=loadPF(); const id=opId(kind, kind==="bundle"?lastBundle[i]:lastCross[i]);
+    const on=pf.some(p=>p.id===id);
+    return '<button class="arb-track'+(on?" tracked":"")+'" data-kind="'+kind+'" data-idx="'+i+'"'+(on?" disabled":"")+'>'+(on?"Tracked":"Track")+'</button>';
+  }
+
+  function opId(kind, op){
+    if(!op) return "";
+    return kind==="bundle" ? ("B|"+op.q+"|"+op.side) : ("C|"+op.q);
+  }
+
+  /* ---------- portfolio ---------- */
+  function trackOp(kind, i){
+    const op = kind==="bundle" ? lastBundle[i] : lastCross[i];
+    if(!op) return;
+    const pf=loadPF(); const id=opId(kind,op);
+    if(pf.some(p=>p.id===id)) return;
+    pf.push({
+      id, date:todayStr(), type: kind==="bundle"?"Bundle":"Cross",
+      market: kind==="bundle"?op.q:op.q,
+      side: kind==="bundle"?op.side:"Spread",
+      slug: op.slug||"",
+      entryEdge: op.net
+    });
+    savePF(pf);
+    renderPortfolio();
+    if(kind==="bundle") renderBundle(lastBundle); else renderCross(lastCross);
+  }
+
+  function currentEdgeFor(item){
+    if(item.type==="Bundle"){
+      const m=lastBundle.find(b=>("B|"+b.q+"|"+b.side)===item.id);
+      return m?m.net:null;
+    } else {
+      const m=lastCross.find(c=>("C|"+c.q)===item.id);
+      return m?m.net:null;
+    }
+  }
+
+  const PCOLS="88px minmax(0,1fr) 78px 72px 74px 70px 78px";
+  function renderPortfolio(){
+    const box=document.getElementById("arb-portfolio"); if(!box) return;
+    const pf=loadPF();
+    let open=0, closed=0, sum=0;
+    const marked=pf.map(it=>{
+      const cur=currentEdgeFor(it);
+      const isOpen = cur!=null && cur>0;
+      if(isOpen) open++; else closed++;
+      sum+=Number(it.entryEdge)||0;
+      return { ...it, cur, isOpen };
+    });
+    setText("arb-pf-n", String(pf.length));
+    setText("arb-pf-open", String(open));
+    setText("arb-pf-closed", String(closed));
+    setText("arb-pf-avg", pf.length ? pctTxt(sum/pf.length) : "\u2014");
+
+    if(!pf.length){ box.innerHTML='<p class="mkt-state">Nothing tracked yet. Use Track on any row above to log it here.</p>'; return; }
+
+    let h='<div class="tracker"><div class="tracker-head" style="grid-template-columns:'+PCOLS+'">'
+      +'<div class="tc"><span class="th">Date</span></div>'
+      +'<div class="tc"><span class="th">Market</span></div>'
+      +'<div class="tc"><span class="th">Type</span></div>'
+      +'<div class="tc"><span class="th">Entry</span></div>'
+      +'<div class="tc"><span class="th">Current</span></div>'
+      +'<div class="tc"><span class="th">&Delta;</span></div>'
+      +'<div class="tc"><span class="th">Status</span></div></div>';
+    marked.forEach(it=>{
+      const name=it.slug?('<a href="https://polymarket.com/market/'+esc(it.slug)+'" target="_blank" rel="noopener">'+esc(clip(it.market,30))+'</a>'):esc(clip(it.market,30));
+      const curTxt = it.cur!=null ? signedPct(it.cur) : "\u2014";
+      const delta = it.cur!=null ? (it.cur-it.entryEdge) : null;
+      const dTxt = delta!=null ? signedPct(delta) : "\u2014";
+      const dCls = delta==null ? "" : (delta>=0?"pos":"neg");
+      const badge = it.isOpen ? '<span class="badge open">Open</span>' : '<span class="badge loss">Closed</span>';
+      h+='<div class="tracker-row" style="grid-template-columns:'+PCOLS+'">'
+        +'<div class="tc"><div class="tv">'+esc(it.date)+'</div></div>'
+        +'<div class="tc"><div class="tv">'+name+'</div></div>'
+        +'<div class="tc"><div class="tv">'+esc(it.type)+'</div></div>'
+        +'<div class="tc"><div class="tv">'+signedPct(it.entryEdge)+'</div></div>'
+        +'<div class="tc"><div class="tv">'+curTxt+'</div></div>'
+        +'<div class="tc"><div class="tv '+dCls+'">'+dTxt+'</div></div>'
+        +'<div class="tc"><div class="tv">'+badge+'</div></div></div>';
+    });
+    box.innerHTML=h+'</div>';
+  }
+
+  /* ---------- main run ---------- */
+  async function run(){
+    if(busy) return; busy=true;
+    setHTML("arb-bundle", '<p class="mkt-state dots">Pulling order books and checking YES + NO</p>');
+    setHTML("arb-cross", '<p class="mkt-state dots">Matching events across sites</p>');
+    setText("arb-stamp", "Scanning\u2026");
+
+    let poly=[], kalshi=[];
+    try{ poly=await loadPolyMarkets(60); }catch(e){ poly=[]; }
+    try{ kalshi=await loadKalshi(120); }catch(e){ kalshi=[]; }
+
+    try{ lastBundle=await scanBundle(poly); }catch(e){ lastBundle=[]; }
+    try{ lastCross=scanCross(poly, kalshi); }catch(e){ lastCross=[]; }
+
+    setText("arb-scanned", String(poly.length));
+    setText("arb-bundle-n", String(lastBundle.length));
+    setText("arb-cross-n", kalshi.length ? String(lastCross.length) : "n/a");
+    const best=Math.max(0, ...lastBundle.map(r=>r.net), ...lastCross.map(r=>r.net));
+    setText("arb-best", (lastBundle.length||lastCross.length) ? pctTxt(best) : "\u2014");
+
+    renderBundle(lastBundle);
+    renderCross(lastCross);
+    renderPortfolio();
+    setText("arb-stamp", "Updated "+nowStamp()+" \u00b7 net edge is after the buffer above \u00b7 "+poly.length+" Polymarket / "+kalshi.length+" Kalshi markets");
+    busy=false;
+  }
+
+  /* ---------- events + lazy start ---------- */
+  document.addEventListener("click", function(e){
+    const btn=e.target.closest && e.target.closest(".arb-track");
+    if(btn && !btn.disabled){ trackOp(btn.dataset.kind, Number(btn.dataset.idx)); return; }
+    const tab=e.target.closest && e.target.closest('[data-tab="arbitrage"]');
+    if(tab) ensureStarted();
+  });
+  document.addEventListener("DOMContentLoaded", function(){
+    renderPortfolio();
+    const rf=document.getElementById("arb-refresh");
+    if(rf) rf.addEventListener("click", function(e){ e.preventDefault(); run(); });
+    const cl=document.getElementById("arb-clear");
+    if(cl) cl.addEventListener("click", function(e){ e.preventDefault(); savePF([]); renderPortfolio(); renderBundle(lastBundle); renderCross(lastCross); });
+    const fee=document.getElementById("arb-fee"), me=document.getElementById("arb-minedge");
+    if(fee) fee.addEventListener("change", function(){ if(started) run(); });
+    if(me) me.addEventListener("change", function(){ if(started) run(); });
+    if((location.hash||"").slice(1)==="arbitrage") ensureStarted();
+  });
+  window.addEventListener("hashchange", function(){ if((location.hash||"").slice(1)==="arbitrage") ensureStarted(); });
+
+  function ensureStarted(){ if(started) return; started=true; run(); }
+})();
+</script>
+
 </body>
 </html>
