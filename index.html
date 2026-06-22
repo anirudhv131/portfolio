@@ -528,7 +528,653 @@ function formatRet(ret, dir){
 
 <!-- ============ PREDICTION MARKET ANALYTICS ============ -->
 <script>
-__ANALYTICS_JS__
+/* ===================================================================
+   PREDICTION MARKET ANALYTICS
+   All figures computed client-side from live public endpoints:
+     Polymarket Gamma  : market metadata + implied probabilities
+     Polymarket CLOB   : hourly price (probability) history
+     Polymarket Data   : on-chain trader leaderboard + trade prints
+     Kalshi Trade API  : cross-platform market feed (best effort)
+   No keys, no backend. The page works without this script.
+=================================================================== */
+(function () {
+  "use strict";
+
+  const GAMMA  = "https://gamma-api.polymarket.com";
+  const CLOB   = "https://clob.polymarket.com";
+  const DATA   = "https://data-api.polymarket.com";
+  const KALSHI = "https://external-api.kalshi.com/trade-api/v2";
+
+  let started = false;
+
+  /* ---------- tiny dom + format helpers ---------- */
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const setHTML = (id, html) => { const n = document.getElementById(id); if (n) n.innerHTML = html; };
+  const setText = (id, txt) => { const n = document.getElementById(id); if (n) n.textContent = txt; };
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function fmtUSD(n) {
+    n = Number(n) || 0;
+    const a = Math.abs(n);
+    if (a >= 1e9) return "$" + (n / 1e9).toFixed(1) + "B";
+    if (a >= 1e6) return "$" + (n / 1e6).toFixed(1) + "M";
+    if (a >= 1e3) return "$" + (n / 1e3).toFixed(0) + "K";
+    return "$" + n.toFixed(0);
+  }
+  function pct(p) { return (p * 100).toFixed(0) + "%"; }
+  function clip(s, n) { s = String(s || ""); return s.length > n ? s.slice(0, n - 1) + "\u2026" : s; }
+  function shortAddr(w) { w = String(w || ""); return w.length > 12 ? w.slice(0, 6) + "\u2026" + w.slice(-4) : w; }
+  function signed(x, d) { const v = (x >= 0 ? "+" : "") + x.toFixed(d == null ? 2 : d); return v; }
+
+  /* ---------- networking ---------- */
+  async function getJSON(url, timeout) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeout || 13000);
+    try {
+      const r = await fetch(url, { signal: ctrl.signal, headers: { accept: "application/json" } });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return await r.json();
+    } finally { clearTimeout(t); }
+  }
+  // run async fn over items with bounded concurrency; never rejects
+  async function pool(items, width, fn) {
+    const out = new Array(items.length);
+    let i = 0;
+    async function worker() {
+      while (i < items.length) {
+        const idx = i++;
+        try { out[idx] = await fn(items[idx], idx); }
+        catch (e) { out[idx] = null; }
+      }
+    }
+    const n = Math.min(width, items.length) || 0;
+    await Promise.all(Array.from({ length: n }, worker));
+    return out;
+  }
+
+  /* ---------- statistics ---------- */
+  function mean(a) { let s = 0; for (let i = 0; i < a.length; i++) s += a[i]; return a.length ? s / a.length : 0; }
+  function std(a) {
+    if (a.length < 2) return 0;
+    const m = mean(a); let s = 0;
+    for (let i = 0; i < a.length; i++) { const d = a[i] - m; s += d * d; }
+    return Math.sqrt(s / (a.length - 1));
+  }
+  function firstDiffs(a) { const d = []; for (let i = 1; i < a.length; i++) d.push(a[i] - a[i - 1]); return d; }
+  function pearson(x, y) {
+    const n = Math.min(x.length, y.length);
+    if (n < 3) return 0;
+    let sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+    for (let i = 0; i < n; i++) {
+      sx += x[i]; sy += y[i]; sxx += x[i] * x[i]; syy += y[i] * y[i]; sxy += x[i] * y[i];
+    }
+    const cov = sxy - (sx * sy) / n;
+    const vx = sxx - (sx * sx) / n;
+    const vy = syy - (sy * sy) / n;
+    const den = Math.sqrt(vx * vy);
+    return den > 1e-12 ? cov / den : 0;
+  }
+  // lag>0 means x leads y: correlate x[t-lag] with y[t]
+  function laggedCorr(x, y, lag) {
+    const xs = [], ys = [];
+    for (let t = lag; t < y.length && t < x.length; t++) { xs.push(x[t - lag]); ys.push(y[t]); }
+    return pearson(xs, ys);
+  }
+
+  /* resample {t,p} (t in seconds) onto an hourly grid by last-observation-carried-forward */
+  function resampleHourly(history, start, end) {
+    const step = 3600;
+    const pts = (history || []).filter(h => h && isFinite(h.t) && isFinite(h.p)).sort((a, b) => a.t - b.t);
+    if (!pts.length) return null;
+    const grid = [];
+    let j = 0, last = null;
+    for (let ts = start; ts <= end; ts += step) {
+      while (j < pts.length && pts[j].t <= ts) { last = pts[j].p; j++; }
+      grid.push(last);
+    }
+    // leading nulls -> first known value
+    let fv = null;
+    for (let k = 0; k < grid.length; k++) { if (grid[k] != null) { fv = grid[k]; break; } }
+    if (fv == null) return null;
+    for (let k = 0; k < grid.length; k++) { if (grid[k] == null) grid[k] = fv; else break; }
+    return grid;
+  }
+
+  /* ---------- field parsing ---------- */
+  function parseArr(v) {
+    if (Array.isArray(v)) return v;
+    if (typeof v === "string") { try { return JSON.parse(v); } catch (e) { return []; } }
+    return [];
+  }
+  function impliedFromMarket(m) {
+    const op = parseArr(m.outcomePrices);
+    if (op.length) { const p = parseFloat(op[0]); if (isFinite(p)) return p; }
+    const p2 = parseFloat(m.lastTradePrice);
+    return isFinite(p2) ? p2 : NaN;
+  }
+  function catOf(m) {
+    const c = (m.category || m.categoryLabel || "").trim();
+    return c ? c : "Other";
+  }
+
+  /* =================================================================
+     LOADERS
+  ================================================================= */
+  async function loadPolyActive(limit) {
+    const base = GAMMA + "/markets?active=true&closed=false&limit=" + (limit || 80);
+    let res;
+    try { res = await getJSON(base + "&order=volume24hr&ascending=false"); }
+    catch (e1) { res = await getJSON(base); }   // some deployments reject sort params
+    const arr = Array.isArray(res) ? res : (res && res.data) || [];
+    const mapped = arr.map(m => {
+      const tok = parseArr(m.clobTokenIds);
+      return {
+        platform: "Polymarket",
+        q: m.question || m.title || m.groupItemTitle || "Market",
+        slug: m.slug || "",
+        prob: impliedFromMarket(m),
+        vol: Number(m.volume24hr) || Number(m.volumeNum) || Number(m.volume) || 0,
+        liq: Number(m.liquidityNum) || Number(m.liquidity) || 0,
+        cat: catOf(m),
+        token: tok[0] || null,
+        endDate: m.endDate || null
+      };
+    }).filter(m => m.token && isFinite(m.prob));
+    mapped.sort((a, b) => b.vol - a.vol);       // guarantee volume order regardless of server sort
+    return mapped;
+  }
+
+  async function loadPolyResolved(limit) {
+    const base = GAMMA + "/markets?closed=true&limit=" + (limit || 60);
+    let res;
+    try { res = await getJSON(base + "&order=volume24hr&ascending=false"); }
+    catch (e1) { res = await getJSON(base); }
+    const arr = Array.isArray(res) ? res : (res && res.data) || [];
+    const out = [];
+    for (const m of arr) {
+      const op = parseArr(m.outcomePrices).map(parseFloat);
+      const tok = parseArr(m.clobTokenIds);
+      if (op.length < 2 || !tok[0] || !m.endDate) continue;
+      const max = Math.max(op[0], op[1]);
+      if (!(max > 0.9)) continue;                 // decisively resolved only
+      out.push({
+        q: m.question || m.title || "Market",
+        cat: catOf(m),
+        token: tok[0],
+        outcomeYes: op[0] > 0.5 ? 1 : 0,
+        endTs: Math.floor(Date.parse(m.endDate) / 1000)
+      });
+    }
+    return out;
+  }
+
+  async function loadKalshi(limit) {
+    const hosts = ["https://api.elections.kalshi.com/trade-api/v2", KALSHI];
+    for (const h of hosts) {
+      try {
+        const res = await getJSON(h + "/markets?status=open&limit=" + (limit || 100), 8000);
+        const arr = (res && res.markets) || [];
+        if (!arr.length) continue;
+        return arr.map(m => {
+          let p = Number(m.last_price);
+          if (!isFinite(p) || p <= 0) {
+            const bid = Number(m.yes_bid), ask = Number(m.yes_ask);
+            if (isFinite(bid) && isFinite(ask) && (bid || ask)) p = (bid + ask) / 2;
+          }
+          if (p > 1.5) p = p / 100;                 // cents -> probability
+          const volC = Number(m.volume_24h) || Number(m.volume) || 0;
+          return {
+            platform: "Kalshi",
+            q: m.title || m.ticker || "Market",
+            slug: m.ticker || "",
+            prob: p,
+            volContracts: volC,
+            vol: volC * (isFinite(p) ? p : 0.5),    // estimated dollar volume
+            cat: (m.category || "Other"),
+            token: null
+          };
+        }).filter(m => isFinite(m.prob) && m.prob > 0 && m.prob < 1);
+      } catch (e) { /* try next host */ }
+    }
+    return [];
+  }
+
+  async function loadHistory(token, interval, fidelity) {
+    const url = CLOB + "/prices-history?market=" + encodeURIComponent(token) +
+      "&interval=" + interval + "&fidelity=" + fidelity;
+    const res = await getJSON(url, 11000);
+    return (res && res.history) || [];
+  }
+
+  async function loadLeaderboard() {
+    const tries = [
+      DATA + "/leaderboard?window=all&limit=15&orderBy=pnl",
+      DATA + "/leaderboard?period=all&limit=15&by=PROFIT",
+      DATA + "/leaderboard?limit=15"
+    ];
+    for (const u of tries) {
+      try {
+        const res = await getJSON(u, 9000);
+        const arr = Array.isArray(res) ? res : (res && (res.data || res.leaderboard)) || [];
+        const rows = arr.map(r => ({
+          wallet: r.proxyWallet || r.address || r.wallet || "",
+          name: r.userName || r.name || r.pseudonym || "",
+          pnl: Number(r.pnl != null ? r.pnl : r.profit),
+          vol: Number(r.vol != null ? r.vol : r.volume)
+        })).filter(r => r.wallet && isFinite(r.pnl));
+        if (rows.length >= 5) return rows;
+      } catch (e) { /* try next */ }
+    }
+    return null;
+  }
+
+  async function loadTradeFlow() {
+    const tries = [
+      DATA + "/trades?limit=500&filterType=CASH&filterAmount=500",
+      DATA + "/trades?limit=500"
+    ];
+    for (const u of tries) {
+      try {
+        const res = await getJSON(u, 11000);
+        const arr = Array.isArray(res) ? res : (res && res.data) || [];
+        if (arr.length) return arr;
+      } catch (e) { /* next */ }
+    }
+    return null;
+  }
+
+  /* =================================================================
+     ANALYSIS BUILDERS
+  ================================================================= */
+
+  // pick a basket of liquid, mid-range markets and pull aligned hourly histories
+  async function buildBasket(active) {
+    const cands = active
+      .filter(m => m.prob > 0.08 && m.prob < 0.92 && m.vol > 0)
+      .slice(0, 14);
+    if (cands.length < 4) return null;
+
+    const hist = await pool(cands, 4, m => loadHistory(m.token, "1w", 60));
+    const series = [];
+    for (let i = 0; i < cands.length; i++) {
+      const h = hist[i];
+      if (!h || h.length < 30) continue;
+      const ts = h.map(x => x.t).filter(isFinite);
+      series.push({ m: cands[i], h: h, start: Math.min.apply(null, ts), end: Math.max.apply(null, ts) });
+    }
+    if (series.length < 4) return null;
+
+    const start = Math.max.apply(null, series.map(s => s.start));
+    const end = Math.min.apply(null, series.map(s => s.end));
+    if (!(end - start > 3600 * 36)) return null;     // need >= ~36h overlap
+
+    const kept = [];
+    for (const s of series) {
+      const grid = resampleHourly(s.h, start, end);
+      if (!grid || grid.length < 24) continue;
+      const d = firstDiffs(grid);
+      if (std(d) < 1e-4) continue;                   // skip flat markets
+      kept.push({ m: s.m, levels: grid, diffs: d });
+    }
+    if (kept.length < 4) return null;
+    return kept.slice(0, 9);                          // cap for a readable matrix
+  }
+
+  function correlationMatrix(basket) {
+    const n = basket.length;
+    const M = [];
+    for (let i = 0; i < n; i++) {
+      M[i] = [];
+      for (let j = 0; j < n; j++) {
+        M[i][j] = i === j ? 1 : pearson(basket[i].diffs, basket[j].diffs);
+      }
+    }
+    return M;
+  }
+
+  function topPairs(basket, M) {
+    const pairs = [];
+    for (let i = 0; i < basket.length; i++)
+      for (let j = i + 1; j < basket.length; j++)
+        pairs.push({ i, j, r: M[i][j] });
+    const pos = pairs.slice().sort((a, b) => b.r - a.r).slice(0, 3);
+    const neg = pairs.slice().sort((a, b) => a.r - b.r).slice(0, 3);
+    return { pos, neg };
+  }
+
+  function leadLag(basket, maxLag) {
+    const n = basket.length;
+    const rows = basket.map((b, idx) => ({ idx, leads: 0, lags: [], peaks: [] }));
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        if (i === j) continue;
+        let bestF = 0, bestFLag = 0, bestB = 0;
+        for (let k = 1; k <= maxLag; k++) {
+          const f = laggedCorr(basket[i].diffs, basket[j].diffs, k); // i leads j
+          if (f > bestF) { bestF = f; bestFLag = k; }
+          const b = laggedCorr(basket[j].diffs, basket[i].diffs, k); // j leads i
+          if (b > bestB) bestB = b;
+        }
+        if (bestF > 0.15 && bestF > bestB) {
+          rows[i].leads += 1;
+          rows[i].lags.push(bestFLag);
+          rows[i].peaks.push(bestF);
+        }
+      }
+    }
+    rows.forEach(r => {
+      r.avgLag = r.lags.length ? mean(r.lags) : 0;
+      r.peak = r.peaks.length ? Math.max.apply(null, r.peaks) : 0;
+      r.score = r.peaks.reduce((s, x) => s + x, 0);
+    });
+    return rows.sort((a, b) => b.score - a.score);
+  }
+
+  async function categoryStats(active, resolved) {
+    // current decisiveness by category
+    const liveBy = {};
+    for (const m of active) {
+      if (!isFinite(m.prob)) continue;
+      (liveBy[m.cat] = liveBy[m.cat] || []).push(Math.abs(m.prob - 0.5) * 2);
+    }
+    // realized Brier by category from resolved markets (price ~48h before close)
+    const sample = resolved.slice(0, 24);
+    const hist = await pool(sample, 4, r => loadHistory(r.token, "max", 360));
+    const brierBy = {};
+    for (let i = 0; i < sample.length; i++) {
+      const r = sample[i], h = hist[i];
+      if (!h || !h.length) continue;
+      const target = r.endTs - 48 * 3600;
+      let chosen = null;
+      for (const pt of h) {
+        if (!isFinite(pt.t) || !isFinite(pt.p)) continue;
+        if (pt.t <= r.endTs - 24 * 3600) {
+          if (!chosen || Math.abs(pt.t - target) < Math.abs(chosen.t - target)) chosen = pt;
+        }
+      }
+      if (!chosen) continue;
+      const b = (chosen.p - r.outcomeYes) * (chosen.p - r.outcomeYes);
+      (brierBy[r.cat] = brierBy[r.cat] || []).push(b);
+    }
+    const cats = new Set([].concat(Object.keys(liveBy), Object.keys(brierBy)));
+    const out = [];
+    cats.forEach(c => {
+      const live = liveBy[c] || [];
+      const br = brierBy[c] || [];
+      out.push({
+        cat: c,
+        nLive: live.length,
+        decisiveness: live.length ? mean(live) : null,
+        nBrier: br.length,
+        brier: br.length ? mean(br) : null
+      });
+    });
+    // sort: categories with a Brier sample first (ascending Brier = more predictable), then by live count
+    out.sort((a, b) => {
+      if (a.brier != null && b.brier != null) return a.brier - b.brier;
+      if (a.brier != null) return -1;
+      if (b.brier != null) return 1;
+      return b.nLive - a.nLive;
+    });
+    return out;
+  }
+
+  function whalesFromFlow(trades) {
+    const by = {};
+    for (const t of trades) {
+      const w = t.proxyWallet; if (!w) continue;
+      const notion = (Number(t.size) || 0) * (Number(t.price) || 0);
+      const rec = by[w] || (by[w] = { wallet: w, name: t.name || t.pseudonym || "", notion: 0, buys: 0, sells: 0, n: 0 });
+      rec.notion += notion; rec.n += 1;
+      if (String(t.side).toUpperCase() === "BUY") rec.buys += notion; else rec.sells += notion;
+      if (!rec.name && (t.name || t.pseudonym)) rec.name = t.name || t.pseudonym;
+    }
+    return Object.values(by).sort((a, b) => b.notion - a.notion).slice(0, 12);
+  }
+
+  /* =================================================================
+     RENDERERS
+  ================================================================= */
+  function profileURL(w) { return "https://polymarket.com/profile/" + w; }
+
+  function renderFeed(rows) {
+    if (!rows.length) { setHTML("mkt-feed", state("No live markets returned. The data services may be busy. Use refresh to try again.")); return; }
+    const head =
+      '<div class="mtab-row mtab-head" style="grid-template-columns:64px 1fr 70px 86px 96px;">' +
+      cell("mh", "Venue") + cell("mh", "Market") + cell("mh", "Implied") + cell("mh", "24h vol") + cell("mh", "Category") + "</div>";
+    const body = rows.map(r => {
+      const pill = r.platform === "Kalshi"
+        ? '<span class="pill kal">Kalshi</span>'
+        : '<span class="pill poly">Poly</span>';
+      const link = r.platform === "Polymarket" && r.slug
+        ? '<a href="https://polymarket.com/market/' + esc(r.slug) + '" target="_blank" rel="noopener">' + esc(clip(r.q, 52)) + "</a>"
+        : esc(clip(r.q, 52));
+      return '<div class="mtab-row" style="grid-template-columns:64px 1fr 70px 86px 96px;">' +
+        cell("mv", pill) +
+        cell("mv", link) +
+        cell("mv", pct(r.prob)) +
+        cell("mv", fmtUSD(r.vol)) +
+        cell("mv", esc(clip(r.cat, 12))) + "</div>";
+    }).join("");
+    setHTML("mkt-feed", '<div class="mtab">' + head + body + "</div>");
+  }
+
+  function renderHeatmap(basket, M) {
+    const n = basket.length;
+    const labels = basket.map((b, i) => "M" + (i + 1));
+    let html = '<div class="heatwrap"><div class="heat" style="grid-template-columns:30px repeat(' + n + ',34px);">';
+    html += '<div class="hlab"></div>';
+    for (let j = 0; j < n; j++) html += '<div class="hlab">' + labels[j] + "</div>";
+    for (let i = 0; i < n; i++) {
+      html += '<div class="hlab">' + labels[i] + "</div>";
+      for (let j = 0; j < n; j++) {
+        const r = M[i][j];
+        const a = (0.1 + 0.72 * Math.min(1, Math.abs(r))).toFixed(2);
+        const bg = r >= 0 ? "rgba(44,65,89," + a + ")" : "rgba(166,61,64," + a + ")";
+        const tcol = Math.abs(r) > 0.62 ? "#F7F4ED" : "var(--ink-soft)";
+        const txt = (r >= 0 ? "" : "\u2212") + Math.abs(r).toFixed(2).replace(/^0/, "");
+        html += '<div class="hcell" style="background:' + bg + ";color:" + tcol + '" title="' +
+          esc(labels[i]) + " vs " + esc(labels[j]) + ": " + r.toFixed(2) + '">' + txt + "</div>";
+      }
+    }
+    html += "</div></div>";
+    html += '<div class="heat-legend"><span class="sw" style="background:rgba(166,61,64,.7)"></span>moves opposite' +
+      '<span class="sw" style="background:rgba(222,218,206,.9)"></span>independent' +
+      '<span class="sw" style="background:rgba(44,65,89,.7)"></span>moves together</div>';
+
+    const tp = topPairs(basket, M);
+    const fmtPair = p => labels[p.i] + " / " + labels[p.j] + " " + signed(p.r, 2);
+    html += '<div class="mkt-pairs"><span>Tightest co-movement: ' + tp.pos.map(fmtPair).join(", ") +
+      ".</span><span>Most divergent: " + tp.neg.map(fmtPair).join(", ") + ".</span></div>";
+
+    html += '<div class="mkt-key">' + basket.map((b, i) =>
+      '<div><span class="kc">M' + (i + 1) + "</span> " + esc(clip(b.m.q, 64)) + "</div>").join("") + "</div>";
+    setHTML("mkt-corr", html);
+  }
+
+  function renderLeadLag(basket, rows) {
+    const labels = {}; basket.forEach((b, i) => labels[i] = "M" + (i + 1));
+    const ranked = rows.filter(r => r.leads > 0);
+    if (!ranked.length) { setHTML("mkt-leadlag", state("No market in the basket showed a consistent lead over the others across the past week. That itself is a result: at hourly resolution this set moved largely in step.")); return; }
+    const head = '<div class="mtab-row mtab-head" style="grid-template-columns:48px 1fr 66px 78px 78px;">' +
+      cell("mh", "Code") + cell("mh", "Market") + cell("mh", "Leads") + cell("mh", "Avg lag") + cell("mh", "Peak r") + "</div>";
+    const body = ranked.map(r =>
+      '<div class="mtab-row" style="grid-template-columns:48px 1fr 66px 78px 78px;">' +
+      cell("mv", '<span class="kc">' + labels[r.idx] + "</span>") +
+      cell("mv", esc(clip(basket[r.idx].m.q, 50))) +
+      cell("mv", String(r.leads)) +
+      cell("mv", r.avgLag.toFixed(1) + "h") +
+      cell("mv", r.peak.toFixed(2)) + "</div>").join("");
+    setHTML("mkt-leadlag", '<div class="mtab">' + head + body + "</div>");
+  }
+
+  function renderWhales(mode, rows) {
+    if (!rows || !rows.length) { setHTML("mkt-whales", state("Trader data did not return. The Data API may be rate limited. Use refresh to try again.")); return; }
+    if (mode === "leaderboard") {
+      const head = '<div class="mtab-row mtab-head" style="grid-template-columns:40px 1fr 92px 92px;">' +
+        cell("mh", "#") + cell("mh", "Trader") + cell("mh", "Realized P/L") + cell("mh", "Volume") + "</div>";
+      const body = rows.map((r, i) => {
+        const cls = r.pnl >= 0 ? "pos" : "neg";
+        const nm = r.name ? esc(clip(r.name, 18)) : shortAddr(r.wallet);
+        return '<div class="mtab-row" style="grid-template-columns:40px 1fr 92px 92px;">' +
+          cell("mv", String(i + 1)) +
+          cell("mv", '<a href="' + profileURL(r.wallet) + '" target="_blank" rel="noopener">' + nm + "</a>") +
+          cell("mv " + cls, (r.pnl >= 0 ? "+" : "\u2212") + fmtUSD(Math.abs(r.pnl))) +
+          cell("mv", isFinite(r.vol) ? fmtUSD(r.vol) : "\u2014") + "</div>";
+      }).join("");
+      setHTML("mkt-whales", '<div class="mtab">' + head + body + "</div>");
+    } else {
+      const head = '<div class="mtab-row mtab-head" style="grid-template-columns:1fr 92px 78px 56px;">' +
+        cell("mh", "Trader") + cell("mh", "Notional") + cell("mh", "Net lean") + cell("mh", "Fills") + "</div>";
+      const body = rows.map(r => {
+        const net = r.buys - r.sells;
+        const lean = net >= 0 ? "Buy YES" : "Sell YES";
+        const cls = net >= 0 ? "pos" : "neg";
+        const nm = r.name ? esc(clip(r.name, 18)) : shortAddr(r.wallet);
+        return '<div class="mtab-row" style="grid-template-columns:1fr 92px 78px 56px;">' +
+          cell("mv", '<a href="' + profileURL(r.wallet) + '" target="_blank" rel="noopener">' + nm + "</a>") +
+          cell("mv", fmtUSD(r.notion)) +
+          cell("mv " + cls, lean) +
+          cell("mv", String(r.n)) + "</div>";
+      }).join("");
+      setHTML("mkt-whales", '<div class="mtab">' + head + body + "</div>");
+    }
+  }
+
+  function renderCategories(rows) {
+    if (!rows.length) { setHTML("mkt-cats", state("No category breakdown available right now.")); return; }
+    const head = '<div class="mtab-row mtab-head" style="grid-template-columns:1fr 86px 64px 92px 56px;">' +
+      cell("mh", "Category") + cell("mh", "Brier 48h") + cell("mh", "n res.") + cell("mh", "Decisive") + cell("mh", "n live") + "</div>";
+    const body = rows.map(r => {
+      const brier = r.brier != null && r.nBrier >= 3 ? r.brier.toFixed(3) : "\u2014";
+      const dec = r.decisiveness != null ? (r.decisiveness * 100).toFixed(0) + "%" : "\u2014";
+      return '<div class="mtab-row" style="grid-template-columns:1fr 86px 64px 92px 56px;">' +
+        cell("mv", esc(clip(r.cat, 18))) +
+        cell("mv", brier) +
+        cell("mv", r.nBrier ? String(r.nBrier) : "\u2014") +
+        cell("mv", dec) +
+        cell("mv", String(r.nLive)) + "</div>";
+    }).join("");
+    setHTML("mkt-cats", '<div class="mtab">' + head + body + "</div>");
+  }
+
+  function cell(cls, inner) { return '<div class="mc"><div class="' + cls + '">' + inner + "</div></div>"; }
+  function state(msg) { return '<div class="mkt-state">' + esc(msg) + "</div>"; }
+  function loading(msg) { return '<div class="mkt-state">' + esc(msg) + "<span class=\"dots\"></span></div>"; }
+
+  function diagnose(err) {
+    if (!err) return "No markets came back from the data service. It may be briefly empty or rate limited. Use refresh to try again.";
+    if (err.name === "AbortError") return "The request to the data service timed out. Use refresh to try again.";
+    const m = String(err.message || "");
+    if (/^HTTP/.test(m)) return "The data service responded with " + m + ". Use refresh in a moment to try again.";
+    return "The browser could not reach the market data services. Outbound requests are blocked inside this in-app preview and on local file pages, which is why nothing loaded here. Open this page on your own site, or in a normal browser tab, and the live data will load.";
+  }
+
+  /* =================================================================
+     ORCHESTRATION
+  ================================================================= */
+  async function run() {
+    const stamp = document.getElementById("mkt-stamp");
+    if (stamp) stamp.textContent = "loading live data";
+
+    ["mkt-feed", "mkt-corr", "mkt-leadlag", "mkt-whales", "mkt-cats"].forEach(id => setHTML(id, loading("Fetching and computing")));
+
+    // 1) feed + summary (fast path)
+    let active = [], polyErr = null;
+    try { active = await loadPolyActive(80); } catch (e) { polyErr = e; active = []; }
+    let kalshi = [];
+    let kalshiOK = false;
+    try { kalshi = await loadKalshi(100); kalshiOK = kalshi.length > 0; } catch (e) { kalshi = []; kalshiOK = false; }
+
+    if (!active.length) {
+      const msg = diagnose(polyErr);
+      ["mkt-feed", "mkt-corr", "mkt-leadlag", "mkt-whales", "mkt-cats"].forEach(id => setHTML(id, state(msg)));
+      setText("sum-markets", "\u2014");
+      setText("sum-vol", "\u2014");
+      setText("sum-venues", "0 of 2");
+      setText("sum-cats", "\u2014");
+      if (stamp) stamp.textContent = "live data unavailable in this view";
+      return;
+    }
+
+    const combined = active.concat(kalshi).sort((a, b) => b.vol - a.vol);
+    renderFeed(combined.slice(0, 16));
+
+    const cats = new Set(combined.map(m => m.cat));
+    const totVol = active.reduce((s, m) => s + (m.vol || 0), 0) + kalshi.reduce((s, m) => s + (m.vol || 0), 0);
+    setText("sum-markets", String(combined.length));
+    setText("sum-vol", fmtUSD(totVol));
+    setText("sum-venues", kalshiOK ? "2 of 2" : "1 of 2");
+    setText("sum-cats", String(cats.size));
+
+    // 2) heavy panels in parallel
+    const jobs = [];
+
+    jobs.push((async () => {
+      try {
+        const basket = await buildBasket(active);
+        if (!basket) { setHTML("mkt-corr", state("Not enough liquid, mid-range markets with overlapping price history to build a stable matrix right now.")); setHTML("mkt-leadlag", state("Lead and lag analysis needs the same basket, which is not available right now.")); return; }
+        const M = correlationMatrix(basket);
+        renderHeatmap(basket, M);
+        const ll = leadLag(basket, 6);
+        renderLeadLag(basket, ll);
+      } catch (e) {
+        setHTML("mkt-corr", state("Correlation analysis hit an error while computing. Use refresh to try again."));
+        setHTML("mkt-leadlag", state("Lead and lag analysis hit an error while computing."));
+      }
+    })());
+
+    jobs.push((async () => {
+      try {
+        const lb = await loadLeaderboard();
+        if (lb) { renderWhales("leaderboard", lb); return; }
+        const flow = await loadTradeFlow();
+        if (flow) { renderWhales("flow", whalesFromFlow(flow)); return; }
+        setHTML("mkt-whales", state("Trader data did not return from the Data API. Use refresh to try again."));
+      } catch (e) {
+        setHTML("mkt-whales", state("Trader data hit an error while loading."));
+      }
+    })());
+
+    jobs.push((async () => {
+      try {
+        const resolved = await loadPolyResolved(50);
+        const rows = await categoryStats(active, resolved);
+        renderCategories(rows);
+      } catch (e) {
+        setHTML("mkt-cats", state("Category analysis hit an error while computing."));
+      }
+    })());
+
+    await Promise.all(jobs);
+    if (stamp) stamp.textContent = "updated " + new Date().toLocaleString("en-US");
+  }
+
+  function ensureStarted() {
+    if (started) return;
+    started = true;
+    run();
+  }
+
+  // lazy start when the Markets tab is first opened
+  document.addEventListener("click", function (e) {
+    const t = e.target.closest && e.target.closest('[data-tab="markets"]');
+    if (t) ensureStarted();
+  });
+  window.addEventListener("hashchange", function () {
+    if ((location.hash || "").slice(1) === "markets") ensureStarted();
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    if ((location.hash || "").slice(1) === "markets") ensureStarted();
+    const rf = document.getElementById("mkt-refresh");
+    if (rf) rf.addEventListener("click", function (e) { e.preventDefault(); run(); });
+  });
+})();
+
 </script>
 </body>
 </html>
