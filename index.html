@@ -365,83 +365,89 @@
   <section id="markets" class="tab-panel">
     <h2 class="panel-title">Prediction Markets</h2>
     <p class="panel-lede">
-      A live study of Kalshi and Polymarket as data, not as a bet slip. Every figure below is
-      computed in your browser from the platforms' public price, history, and on-chain trade
-      feeds when you open this tab. The question throughout is whether these markets carry
-      structure that survives measurement: which ones move together, which tend to move first,
-      who is behind the size, and which subjects the crowd actually prices well.
+      Prediction markets are sites like Kalshi and Polymarket where people bet real money on what
+      will happen, from elections to sports to crypto. The price of each bet is the crowd's guess at
+      the odds: a bet trading at 70 cents means the crowd thinks it is about 70 percent likely. This
+      page pulls those live bets the moment you open it and runs a few plain tests on them, right in
+      your browser. The point is to see whether these crowds are any good at predicting things, and
+      whether useful patterns are hiding in how the odds move.
       <a id="mkt-refresh" href="#markets" style="margin-left:4px; color:var(--navy); border-bottom:1px solid var(--rule);">Refresh data</a>
     </p>
 
     <div class="summary">
-      <div class="cell"><p class="k">Markets</p><div class="v" id="sum-markets">—</div></div>
-      <div class="cell"><p class="k">24h vol (est.)</p><div class="v" id="sum-vol">—</div></div>
-      <div class="cell"><p class="k">Venues live</p><div class="v" id="sum-venues">—</div></div>
-      <div class="cell"><p class="k">Categories</p><div class="v" id="sum-cats">—</div></div>
+      <div class="cell"><p class="k">Bets tracked</p><div class="v" id="sum-markets">—</div></div>
+      <div class="cell"><p class="k">Traded today</p><div class="v" id="sum-vol">—</div></div>
+      <div class="cell"><p class="k">Sites live</p><div class="v" id="sum-venues">—</div></div>
+      <div class="cell"><p class="k">Topics</p><div class="v" id="sum-cats">—</div></div>
     </div>
-    <p class="feed-note" id="mkt-stamp">A live connection opens when this tab is first viewed.</p>
+    <p class="feed-note" id="mkt-stamp">This loads live the first time you open the tab.</p>
 
     <!-- aggregate feed -->
     <div class="mkt-section">
-      <p class="paper-tag">Aggregate feed</p>
-      <h3 class="mkt-h">Both venues, ranked by money at work</h3>
+      <p class="paper-tag">What people are betting on</p>
+      <h3 class="mkt-h">The busiest bets right now</h3>
       <p class="mkt-note">
-        Top markets across Polymarket and Kalshi by 24 hour volume. Kalshi dollar volume is
-        estimated from contract volume and price. If a browser blocks the Kalshi feed, Polymarket
-        still carries the table on its own.
+        A live list of the most active bets across both sites, ordered by how much money is moving
+        through them today. For each one you can see the crowd's current odds, how much has been
+        traded, and the topic. This is the raw picture before any of the analysis further down.
       </p>
       <div id="mkt-feed"></div>
     </div>
 
     <!-- correlation -->
     <div class="mkt-section">
-      <p class="paper-tag">Cross-market correlation</p>
+      <p class="paper-tag">Bets that move together</p>
       <h3 class="mkt-h">What moves together</h3>
       <p class="mkt-note">
-        Pearson correlation of hourly changes in implied probability over the past seven days,
-        across a basket of the most liquid mid-range Polymarket markets. Differencing strips out
-        shared drift, so the matrix reflects genuine co-movement rather than a common trend.
-        Correlation is not causation.
+        This checks which bets tend to rise and fall at the same time over the past week. Each square
+        is a score from minus one to plus one. Near plus one (blue) means two bets move in the same
+        direction together. Near minus one (red) means when one goes up the other goes down. Near zero
+        (pale) means they have nothing to do with each other. It is a useful gut check: bets on the same
+        game should be strongly linked, and unrelated bets should not be.
       </p>
       <div id="mkt-corr"></div>
     </div>
 
     <!-- lead-lag -->
     <div class="mkt-section">
-      <p class="paper-tag">Leading indicators</p>
-      <h3 class="mkt-h">What tends to move first</h3>
+      <p class="paper-tag">Bets that move first</p>
+      <h3 class="mkt-h">What moves first</h3>
       <p class="mkt-note">
-        For every pair in the basket, the cross-correlation is measured at lags of one to six hours.
-        A market is credited with leading another when its earlier moves line up with the other's
-        later moves more strongly than the reverse, above a 0.15 threshold. Seven days of hourly data
-        is a small sample, so read this as an exploratory signal rather than settled structure.
+        This hunts for an early warning signal: a bet whose odds tend to shift a few hours before
+        another bet reacts. If that holds, watching the first bet gives you a head start on the second.
+        "Head start" is how many hours ahead, and "strength" is how reliable the pattern is, on the same
+        scale as the grid above. Be skeptical here. The signals are usually weak, and a week of data is
+        not much, so treat anything that shows up as a hunch to check rather than a sure thing. Weak or
+        illogical results are almost always random noise, not a real lead.
       </p>
       <div id="mkt-leadlag"></div>
     </div>
 
     <!-- whales -->
     <div class="mkt-section">
-      <p class="paper-tag">Large traders</p>
-      <h3 class="mkt-h">Who is behind the size</h3>
+      <p class="paper-tag">The biggest traders</p>
+      <h3 class="mkt-h">Who is winning, and on what</h3>
       <p class="mkt-note">
-        Ranked from Polymarket's on-chain trader leaderboard by realized profit, the platform's own
-        settled figure, with traded volume alongside as a measure of track record. If the leaderboard
-        is unavailable, this falls back to the largest wallets in the recent public trade feed, with
-        their net direction. Names link to public Polymarket profiles.
+        The traders who have made the most real money on Polymarket, with how much they have traded
+        shown next to their name as a rough read on track record. The idea is simple: people who keep
+        winning may be worth watching. If that ranking is not available, this instead shows the wallets
+        placing the largest bets right now and which way they are leaning. Names link to their public
+        profiles so you can see what they hold.
       </p>
       <div id="mkt-whales"></div>
     </div>
 
     <!-- categories -->
     <div class="mkt-section">
-      <p class="paper-tag">Category predictability</p>
-      <h3 class="mkt-h">Which subjects the crowd prices well</h3>
+      <p class="paper-tag">Is the crowd right</p>
+      <h3 class="mkt-h">Which topics the crowd gets right</h3>
       <p class="mkt-note">
-        Brier 48h is the mean squared gap between the implied probability roughly two days before a
-        market resolved and what actually happened, measured over recent decisively resolved Polymarket
-        markets. Lower means better calibrated, so lower means more predictable. Decisive is how far the
-        category's live markets sit from a coin flip on average. Categories with fewer than three
-        resolved samples show a dash.
+        This asks the real question: is the crowd actually accurate, and is it better at some topics
+        than others? It takes bets that already finished, looks at what the odds said about two days
+        before the result was known, and checks how close that was to what really happened. The Brier
+        score is just that gap, so a lower number means the crowd in that topic tends to be right.
+        "Decisive" is how confident a topic's live bets are on average, meaning how far from a 50-50
+        coin flip. Topics with too few finished bets to judge fairly show a dash.
       </p>
       <div id="mkt-cats"></div>
     </div>
@@ -945,7 +951,7 @@ function formatRet(ret, dir){
     if (!rows.length) { setHTML("mkt-feed", state("No live markets returned. The data services may be busy. Use refresh to try again.")); return; }
     const head =
       '<div class="mtab-row mtab-head" style="grid-template-columns:64px 1fr 70px 86px 96px;">' +
-      cell("mh", "Venue") + cell("mh", "Market") + cell("mh", "Implied") + cell("mh", "24h vol") + cell("mh", "Category") + "</div>";
+      cell("mh", "Site") + cell("mh", "Bet") + cell("mh", "Odds") + cell("mh", "Traded") + cell("mh", "Topic") + "</div>";
     const body = rows.map(r => {
       const pill = r.platform === "Kalshi"
         ? '<span class="pill kal">Kalshi</span>'
@@ -988,8 +994,8 @@ function formatRet(ret, dir){
 
     const tp = topPairs(basket, M);
     const fmtPair = p => labels[p.i] + " / " + labels[p.j] + " " + signed(p.r, 2);
-    html += '<div class="mkt-pairs"><span>Tightest co-movement: ' + tp.pos.map(fmtPair).join(", ") +
-      ".</span><span>Most divergent: " + tp.neg.map(fmtPair).join(", ") + ".</span></div>";
+    html += '<div class="mkt-pairs"><span>Move together most: ' + tp.pos.map(fmtPair).join(", ") +
+      ".</span><span>Move opposite most: " + tp.neg.map(fmtPair).join(", ") + ".</span></div>";
 
     html += '<div class="mkt-key">' + basket.map((b, i) =>
       '<div><span class="kc">M' + (i + 1) + "</span> " + esc(clip(b.m.q, 64)) + "</div>").join("") + "</div>";
@@ -999,11 +1005,11 @@ function formatRet(ret, dir){
   function renderLeadLag(basket, rows) {
     const labels = {}; basket.forEach((b, i) => labels[i] = "M" + (i + 1));
     const ranked = rows.filter(r => r.leads > 0);
-    if (!ranked.length) { setHTML("mkt-leadlag", state("No market in the basket showed a consistent lead over the others across the past week. That itself is a result: at hourly resolution this set moved largely in step.")); return; }
-    const head = '<div class="mtab-row mtab-head" style="grid-template-columns:48px 1fr 66px 78px 78px;">' +
-      cell("mh", "Code") + cell("mh", "Market") + cell("mh", "Leads") + cell("mh", "Avg lag") + cell("mh", "Peak r") + "</div>";
+    if (!ranked.length) { setHTML("mkt-leadlag", state("None of these bets reliably moved before the others this week. That is itself a finding: this group tends to move together, not one after another, so there is no clean head start to be had here.")); return; }
+    const head = '<div class="mtab-row mtab-head" style="grid-template-columns:44px 1fr 78px 80px 70px;">' +
+      cell("mh", "Code") + cell("mh", "Bet") + cell("mh", "Bets led") + cell("mh", "Head start") + cell("mh", "Strength") + "</div>";
     const body = ranked.map(r =>
-      '<div class="mtab-row" style="grid-template-columns:48px 1fr 66px 78px 78px;">' +
+      '<div class="mtab-row" style="grid-template-columns:44px 1fr 78px 80px 70px;">' +
       cell("mv", '<span class="kc">' + labels[r.idx] + "</span>") +
       cell("mv", esc(clip(basket[r.idx].m.q, 50))) +
       cell("mv", String(r.leads)) +
@@ -1016,7 +1022,7 @@ function formatRet(ret, dir){
     if (!rows || !rows.length) { setHTML("mkt-whales", state("Trader data did not return. The Data API may be rate limited. Use refresh to try again.")); return; }
     if (mode === "leaderboard") {
       const head = '<div class="mtab-row mtab-head" style="grid-template-columns:40px 1fr 92px 92px;">' +
-        cell("mh", "#") + cell("mh", "Trader") + cell("mh", "Realized P/L") + cell("mh", "Volume") + "</div>";
+        cell("mh", "#") + cell("mh", "Trader") + cell("mh", "Profit") + cell("mh", "Traded") + "</div>";
       const body = rows.map((r, i) => {
         const cls = r.pnl >= 0 ? "pos" : "neg";
         const nm = r.name ? esc(clip(r.name, 18)) : shortAddr(r.wallet);
@@ -1028,14 +1034,14 @@ function formatRet(ret, dir){
       }).join("");
       setHTML("mkt-whales", '<div class="mtab">' + head + body + "</div>");
     } else {
-      const head = '<div class="mtab-row mtab-head" style="grid-template-columns:1fr 92px 78px 56px;">' +
-        cell("mh", "Trader") + cell("mh", "Notional") + cell("mh", "Net lean") + cell("mh", "Fills") + "</div>";
+      const head = '<div class="mtab-row mtab-head" style="grid-template-columns:1fr 92px 86px 56px;">' +
+        cell("mh", "Trader") + cell("mh", "Bet size") + cell("mh", "Leaning") + cell("mh", "Bets") + "</div>";
       const body = rows.map(r => {
         const net = r.buys - r.sells;
-        const lean = net >= 0 ? "Buy YES" : "Sell YES";
+        const lean = net >= 0 ? "Betting yes" : "Betting no";
         const cls = net >= 0 ? "pos" : "neg";
         const nm = r.name ? esc(clip(r.name, 18)) : shortAddr(r.wallet);
-        return '<div class="mtab-row" style="grid-template-columns:1fr 92px 78px 56px;">' +
+        return '<div class="mtab-row" style="grid-template-columns:1fr 92px 86px 56px;">' +
           cell("mv", '<a href="' + profileURL(r.wallet) + '" target="_blank" rel="noopener">' + nm + "</a>") +
           cell("mv", fmtUSD(r.notion)) +
           cell("mv " + cls, lean) +
@@ -1047,12 +1053,12 @@ function formatRet(ret, dir){
 
   function renderCategories(rows) {
     if (!rows.length) { setHTML("mkt-cats", state("No category breakdown available right now.")); return; }
-    const head = '<div class="mtab-row mtab-head" style="grid-template-columns:1fr 86px 64px 92px 56px;">' +
-      cell("mh", "Category") + cell("mh", "Brier 48h") + cell("mh", "n res.") + cell("mh", "Decisive") + cell("mh", "n live") + "</div>";
+    const head = '<div class="mtab-row mtab-head" style="grid-template-columns:1fr 84px 70px 84px 52px;">' +
+      cell("mh", "Topic") + cell("mh", "Brier score") + cell("mh", "Finished") + cell("mh", "Decisive") + cell("mh", "Live") + "</div>";
     const body = rows.map(r => {
       const brier = r.brier != null && r.nBrier >= 3 ? r.brier.toFixed(3) : "\u2014";
       const dec = r.decisiveness != null ? (r.decisiveness * 100).toFixed(0) + "%" : "\u2014";
-      return '<div class="mtab-row" style="grid-template-columns:1fr 86px 64px 92px 56px;">' +
+      return '<div class="mtab-row" style="grid-template-columns:1fr 84px 70px 84px 52px;">' +
         cell("mv", esc(clip(r.cat, 18))) +
         cell("mv", brier) +
         cell("mv", r.nBrier ? String(r.nBrier) : "\u2014") +
@@ -1117,7 +1123,7 @@ function formatRet(ret, dir){
     jobs.push((async () => {
       try {
         const basket = await buildBasket(active);
-        if (!basket) { setHTML("mkt-corr", state("Not enough liquid, mid-range markets with overlapping price history to build a stable matrix right now.")); setHTML("mkt-leadlag", state("Lead and lag analysis needs the same basket, which is not available right now.")); return; }
+        if (!basket) { setHTML("mkt-corr", state("There are not enough active bets with enough recent price history to build a reliable grid right now. Try refreshing in a little while.")); setHTML("mkt-leadlag", state("This uses the same set of bets as the grid above, which is not available right now.")); return; }
         const M = correlationMatrix(basket);
         renderHeatmap(basket, M);
         const ll = leadLag(basket, 6);
