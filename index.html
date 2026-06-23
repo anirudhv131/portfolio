@@ -212,6 +212,7 @@
       <div class="cell"><p class="k">Open</p><div class="v">2</div></div>
       <div class="cell"><p class="k">Closed</p><div class="v">0</div></div>
       <div class="cell"><p class="k">Hit rate</p><div class="v">—</div></div>
+      <div class="cell"><p class="k">Total return</p><div class="v" id="totalRet">—</div></div>
     </div>
     <p class="feed-note" id="feedNote">Marked to last close. Live feed updates on load.</p>
 
@@ -353,6 +354,7 @@ function formatRet(ret, dir){
 (async function liveUpdate(){
   const rows = document.querySelectorAll('.tracker-row[data-ticker]');
   let updated = false;
+  const rets = {};   /* ticker -> directional return */
 
   for(const row of rows){
     const ticker = row.dataset.ticker;
@@ -368,12 +370,32 @@ function formatRet(ret, dir){
 
     /* return — short leg gains when price falls */
     const raw = dir === 'short' ? (entry - price) / entry : (price - entry) / entry;
+    rets[ticker] = raw;
     const retEl = row.querySelector('.ret-' + ticker);
     if(retEl){
       const arrow = raw >= 0 ? '▲ ' : '▼ ';
       const sign  = raw >= 0 ? '+' : '';
       retEl.textContent = arrow + sign + (raw * 100).toFixed(1) + '%';
       retEl.className = 'tv ret-' + ticker + (raw >= 0 ? ' pos' : ' neg');
+    }
+  }
+
+  /* ---- total portfolio return: equal weight per call ----
+     Call 1 = TXRH/CAVA pair (market-neutral, avg of the two legs)
+     Call 2 = CI                                                   */
+  const calls = [];
+  if(rets.TXRH != null && rets.CAVA != null) calls.push((rets.TXRH + rets.CAVA) / 2);
+  if(rets.CI   != null) calls.push(rets.CI);
+  const totEl = document.getElementById('totalRet');
+  if(totEl){
+    if(calls.length){
+      const total = calls.reduce((s, x) => s + x, 0) / calls.length;
+      const arrow = total >= 0 ? '▲ ' : '▼ ';
+      const sign  = total >= 0 ? '+' : '';
+      totEl.textContent = arrow + sign + (total * 100).toFixed(1) + '%';
+      totEl.style.color = total >= 0 ? 'var(--pos)' : 'var(--neg)';
+    } else {
+      totEl.textContent = '—';
     }
   }
 
