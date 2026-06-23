@@ -208,8 +208,8 @@
     </p>
 
     <div class="summary">
-      <div class="cell"><p class="k">Calls</p><div class="v">2</div></div>
-      <div class="cell"><p class="k">Open</p><div class="v">2</div></div>
+      <div class="cell"><p class="k">Calls</p><div class="v">3</div></div>
+      <div class="cell"><p class="k">Open</p><div class="v">3</div></div>
       <div class="cell"><p class="k">Closed</p><div class="v">0</div></div>
       <div class="cell"><p class="k">Hit rate</p><div class="v">—</div></div>
       <div class="cell"><p class="k">Total return</p><div class="v" id="totalRet">—</div></div>
@@ -226,6 +226,17 @@
         <div class="tc"><span class="th">Current</span></div>
         <div class="tc"><span class="th">Return</span></div>
         <div class="tc"><span class="th">Status</span></div>
+      </div>
+
+      <!-- WBD merger arb -->
+      <div class="tracker-row" data-ticker="WBD" data-direction="long" data-entry="26.95">
+        <div class="tc"><div class="tv">Jun 23</div></div>
+        <div class="tc"><div class="tv"><a href="https://finance.yahoo.com/quote/WBD" target="_blank" rel="noopener">WBD</a></div></div>
+        <div class="tc"><div class="tv dir-long">Long</div></div>
+        <div class="tc"><div class="tv">$26.95</div></div>
+        <div class="tc"><div class="tv cur-WBD">$26.95</div></div>
+        <div class="tc"><div class="tv ret-WBD">—</div></div>
+        <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
       </div>
 
       <!-- TXRH long leg -->
@@ -264,6 +275,26 @@
 
     <!-- ── position writeups ── -->
     <div class="positions">
+
+      <!-- WBD -->
+      <article class="paper">
+        <p class="paper-tag">Equity Research · Merger Arbitrage · Jun 23, 2026</p>
+        <h3 class="paper-title">Long Warner Bros. Discovery (NASDAQ: WBD): Arbitraging the Paramount Deal</h3>
+        <p class="paper-desc">
+          This is a merger-arbitrage position, long Warner Bros. Discovery into Paramount's signed $31.00 all-cash
+          offer. It is not a view on the media business. The position pays out if the deal closes, and that outcome
+          has little to do with where the market goes. WBD trades near $26.95, so the spread to the $31 offer is about
+          15 percent, which is wide for a deal this far along. The DOJ cleared it in June, along with China and
+          Australia, and what is left is mostly a threatened lawsuit from a group of state attorneys general, who
+          rarely stop a merger the federal agencies have already passed. A $7 billion break fee and a recent rival bid
+          from Netflix limit how far the stock would fall if it broke. The shareholder vote and an expected
+          third-quarter close are the near-term catalysts.
+        </p>
+        <a class="paper-link" href="WBD_Merger_Arb_Report.pdf" target="_blank" rel="noopener">
+          Read the report
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+      </article>
 
       <!-- TXRH / CAVA -->
       <article class="paper">
@@ -381,9 +412,11 @@ function formatRet(ret, dir){
   }
 
   /* ---- total portfolio return: equal weight per call ----
-     Call 1 = TXRH/CAVA pair (market-neutral, avg of the two legs)
-     Call 2 = CI                                                   */
+     Call 1 = WBD merger arb
+     Call 2 = TXRH/CAVA pair (market-neutral, avg of the two legs)
+     Call 3 = CI                                                   */
   const calls = [];
+  if(rets.WBD  != null) calls.push(rets.WBD);
   if(rets.TXRH != null && rets.CAVA != null) calls.push((rets.TXRH + rets.CAVA) / 2);
   if(rets.CI   != null) calls.push(rets.CI);
   const totEl = document.getElementById('totalRet');
