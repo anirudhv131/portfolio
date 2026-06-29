@@ -3,174 +3,250 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22avg%22%20gradientUnits%3D%22userSpaceOnUse%22%20x1%3D%2214.3%22%20y1%3D%2262.2%22%20x2%3D%2277.7%22%20y2%3D%2237.8%22%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%23F4F1EA%22%2F%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%2388A9DC%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2218%22%20fill%3D%22%2313161F%22%2F%3E%3Cpath%20d%3D%22M14%2076%20L36%2024%20L56%2076%20L86%2024%22%20fill%3D%22none%22%20stroke%3D%22url%28%23avg%29%22%20stroke-width%3D%2215%22%20stroke-linejoin%3D%22miter%22%20stroke-miterlimit%3D%221.7%22%20stroke-linecap%3D%22butt%22%2F%3E%3C%2Fsvg%3E">
 <title>Anirudh Venkatesan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper: #F7F4ED;
-    --ink: #1C1B19;
-    --ink-soft: #5B5650;
-    --rule: #DEDACE;
-    --navy: #2C4159;
-    --pos: #2F6F4E;
-    --neg: #A63D40;
+    /* after-hours desk: layered charcoal, warm off-white, semantic P&L */
+    --bg:        #0B0D12;
+    --bg-elev:   #12151D;
+    --bg-elev-2: #171B25;
+    --ink:       #ECE8E0;   /* warm off-white — expensive, not sterile */
+    --ink-soft:  #9097A4;
+    --ink-faint: #5A6170;
+    --rule:        rgba(236,232,224,0.085);
+    --rule-strong: rgba(236,232,224,0.16);
+    --accent:     #9DB8DA;  /* steel blue — interactive only */
+    --accent-dim: #6E8AB0;
+    --pos:        #5FB389;  /* gains */
+    --neg:        #D67D77;  /* losses */
+    --glow:       rgba(157,184,218,0.16);
+
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   *{ box-sizing: border-box; }
-  html{ -webkit-font-smoothing: antialiased; }
+  html{ -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
   body{
-    margin: 0; background: var(--paper); color: var(--ink);
+    margin: 0; background: var(--bg); color: var(--ink);
     font-family: 'Inter', sans-serif; line-height: 1.65; font-size: 17px;
+    position: relative; overflow-x: hidden;
   }
-  .wrap{ max-width: 640px; margin: 0 auto; padding: 44px 24px 120px; }
 
-  /* ---------- nav / tabs ---------- */
+  /* ambient atmosphere — faint terminal grid + soft vignette, very low key */
+  body::before{
+    content:""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+    background-size: 46px 46px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,0,0,0.5), transparent 75%);
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,0,0,0.5), transparent 75%);
+    opacity: 0.5;
+  }
+  body::after{
+    content:""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(110% 70% at 50% -10%, var(--glow), transparent 55%);
+    opacity: 0.7;
+  }
+
+  .wrap{ position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 40px 24px 120px; }
+
+  /* ---------- load orchestration ---------- */
+  .rise{ opacity: 0; transform: translateY(14px); }
+  .lit .rise{ opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+  .lit .rise[data-d="1"]{ transition-delay: 0.06s; }
+  .lit .rise[data-d="2"]{ transition-delay: 0.13s; }
+  .lit .rise[data-d="3"]{ transition-delay: 0.21s; }
+  .lit .rise[data-d="4"]{ transition-delay: 0.30s; }
+
+  /* ---------- nav ---------- */
   .nav{
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding-bottom: 18px; margin-bottom: 64px; border-bottom: 1px solid var(--rule);
-    flex-wrap: wrap; gap: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 18px; margin-bottom: 70px; border-bottom: 1px solid var(--rule);
+    flex-wrap: wrap; gap: 12px;
   }
   .nav .who{
+    display: inline-flex; align-items: center; gap: 11px;
     font-family: 'Newsreader', serif; font-weight: 600; font-size: 18px;
     letter-spacing: -0.01em; color: var(--ink); text-decoration: none; cursor: pointer;
   }
-  .nav .tabs{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .brand-mark{ width: 29px; height: 29px; flex: none; display: block; border-radius: 7px; transition: transform 0.35s var(--ease), filter 0.35s var(--ease); }
+  .nav .who:hover .brand-mark{ transform: translateY(-1px); filter: drop-shadow(0 0 6px var(--glow)); }
+  .who-name{ transition: color 0.2s var(--ease); }
+  .nav .who:hover .who-name{ color: var(--accent); }
+  .nav .tabs{ font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.12em; }
   .nav .tabs a{
-    color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid transparent;
-    padding-bottom: 2px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease;
+    position: relative; color: var(--ink-soft); text-decoration: none;
+    padding-bottom: 4px; cursor: pointer; transition: color 0.2s var(--ease);
   }
-  .nav .tabs a + a{ margin-left: 20px; }
-  .nav .tabs a:hover{ color: var(--navy); }
-  .nav .tabs a.active{ color: var(--navy); border-bottom-color: var(--navy); }
+  .nav .tabs a + a{ margin-left: 22px; }
+  .nav .tabs a::after{
+    content:""; position: absolute; left: 0; right: 100%; bottom: 0; height: 1px;
+    background: var(--accent); transition: right 0.32s var(--ease);
+  }
+  .nav .tabs a:hover{ color: var(--ink); }
+  .nav .tabs a:hover::after{ right: 0; }
+  .nav .tabs a.active{ color: var(--accent); }
+  .nav .tabs a.active::after{ right: 0; }
 
   /* ---------- tab panels ---------- */
   .tab-panel{ display: none; }
-  .tab-panel.active{ display: block; animation: fade 0.25s ease; }
-  @keyframes fade{ from{ opacity: 0; transform: translateY(4px);} to{ opacity: 1; transform: none;} }
+  .tab-panel.active{ display: block; }
 
   /* ---------- home ---------- */
-  .name{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 44px; letter-spacing: -0.01em; margin: 0 0 18px; }
-  .bio{ font-size: 17px; color: var(--ink); max-width: 540px; margin: 0; }
-  .bio a, .links a{ color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--rule); transition: border-color 0.15s ease; cursor: pointer; }
-  .bio a:hover, .links a:hover{ border-bottom-color: var(--navy); }
-  .links{ margin-top: 24px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.18em; color: var(--ink-faint); margin: 0 0 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before{ content:""; width: 22px; height: 1px; background: var(--accent-dim); }
+  .name{
+    font-family: 'Newsreader', serif; font-weight: 600; font-size: 46px;
+    letter-spacing: -0.015em; line-height: 1.05; margin: 0 0 22px;
+  }
+  .bio{ font-size: 17px; color: var(--ink); max-width: 560px; margin: 0; }
+  .bio a, .links a{
+    color: var(--accent); text-decoration: none;
+    border-bottom: 1px solid var(--rule-strong); transition: border-color 0.2s var(--ease);
+  }
+  .bio a:hover, .links a:hover{ border-bottom-color: var(--accent); }
+  .links{ margin-top: 28px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
   .links a{ border-bottom-color: transparent; }
 
   /* ---------- panel heading ---------- */
-  .panel-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 40px; letter-spacing: -0.01em; margin: 0 0 14px; }
-  .panel-lede{ font-size: 16px; color: var(--ink); max-width: 560px; margin: 0 0 30px; }
+  .panel-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 40px; letter-spacing: -0.015em; margin: 0 0 14px; }
+  .panel-lede{ font-size: 16px; color: var(--ink-soft); max-width: 580px; margin: 0 0 34px; }
+
+  /* ---------- scroll reveal ---------- */
+  .reveal{ opacity: 0; transform: translateY(20px); }
+  .reveal.in{ opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
 
   /* ---------- papers / report blocks ---------- */
-  .papers{ display: flex; flex-direction: column; gap: 52px; margin-top: 8px; }
-  .paper-tag{ font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); margin: 0 0 8px; }
-  .paper-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 25px; line-height: 1.3; margin: 0 0 12px; }
-  .paper-desc{ color: var(--ink); margin: 0 0 16px; }
-  .paper-link{
-    font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--navy); text-decoration: none;
-    display: inline-flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--navy);
-    padding-bottom: 1px; transition: opacity 0.15s ease;
+  .papers{ display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+  .paper{
+    border: 1px solid var(--rule); border-radius: 3px; background: var(--bg-elev);
+    padding: 26px 26px 24px; transition: border-color 0.3s var(--ease), background 0.3s var(--ease), transform 0.3s var(--ease);
   }
-  .paper-link:hover{ opacity: 0.6; }
-  .paper-link svg{ width: 11px; height: 11px; }
-  .paper-links{ display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
+  .paper:hover{ border-color: var(--rule-strong); background: var(--bg-elev-2); transform: translateY(-2px); }
+  .paper-tag{ font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-faint); margin: 0 0 10px; }
+  .paper-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 24px; line-height: 1.28; margin: 0 0 12px; letter-spacing: -0.01em; }
+  .paper-desc{ color: var(--ink-soft); margin: 0 0 18px; font-size: 15.5px; }
+  .paper-link{
+    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--accent); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .paper-link svg{ width: 12px; height: 12px; transition: transform 0.25s var(--ease); }
+  .paper-link:hover svg{ transform: translate(2px,-2px); }
+  .paper-links{ display: flex; flex-wrap: wrap; gap: 26px; align-items: center; }
+
+  /* ---------- investments: live status row ---------- */
+  .deskline{
+    display: flex; align-items: center; gap: 9px; margin: 0 0 18px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.08em;
+    color: var(--ink-faint); text-transform: uppercase;
+  }
+  .dot{ width: 7px; height: 7px; border-radius: 50%; background: var(--ink-faint); flex: none; }
+  .deskline.live .dot{ background: var(--pos); box-shadow: 0 0 0 0 rgba(95,179,137,0.55); animation: pulse 2.2s infinite; }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(95,179,137,0.5); }
+    70%{ box-shadow: 0 0 0 7px rgba(95,179,137,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(95,179,137,0); }
+  }
 
   /* ---------- investments: summary ---------- */
-  .summary{ display: flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
-  .summary .cell{ flex: 1 1 auto; min-width: 96px; padding: 14px 16px; border-right: 1px solid var(--rule); }
+  .summary{ display: flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; background: var(--bg-elev); }
+  .summary .cell{ flex: 1 1 auto; min-width: 104px; padding: 16px 18px; border-right: 1px solid var(--rule); }
   .summary .cell:last-child{ border-right: 0; }
-  .summary .k{ font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.11em; color: var(--ink-soft); margin: 0 0 5px; }
-  .summary .v{ font-family: 'IBM Plex Mono', monospace; font-size: 19px; font-weight: 500; color: var(--ink); }
-  .feed-note{ font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-soft); margin: 12px 2px 0; }
+  .summary .k{ font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-faint); margin: 0 0 7px; }
+  .summary .v{ font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 500; color: var(--ink); }
 
-  /* ---------- investments: positions ---------- */
-  .positions{ display: flex; flex-direction: column; gap: 56px; margin-top: 60px; }
-  .ledger{ display: grid; grid-template-columns: repeat(6, 1fr); border: 1px solid var(--rule); border-radius: 2px; background: #FBF9F3; margin-bottom: 18px; }
-  .ledger .lc{ padding: 11px 12px; border-right: 1px solid var(--rule); }
-  .ledger .lc:last-child{ border-right: 0; }
-  .ledger .ll{ font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); margin: 0 0 5px; white-space: nowrap; }
-  .ledger .lv{ font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--ink); white-space: nowrap; }
-  .ledger .lv a{ color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--rule); }
-  .ledger .lv a:hover{ border-bottom-color: var(--navy); }
-  .lv.pos{ color: var(--pos); }
-  .lv.neg{ color: var(--neg); }
-  .dir-long{ color: var(--pos); }
-  .dir-short{ color: var(--neg); }
-  .badge{ display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
-  .badge.open{ color: var(--navy); }
-  .badge.win{ color: var(--pos); }
-  .badge.loss{ color: var(--neg); }
-
-  /* ---------- unified tracker table ---------- */
-  .tracker{ border: 1px solid var(--rule); border-radius: 2px; background: #FBF9F3; margin-bottom: 48px; overflow: hidden; }
-  .tracker-head{ display: grid; grid-template-columns: 88px 110px 72px 72px 72px 68px 72px; border-bottom: 2px solid var(--rule); }
-  .tracker-row{ display: grid; grid-template-columns: 88px 110px 72px 72px 72px 68px 72px; border-top: 1px solid var(--rule); }
+  /* ---------- investments: tracker ---------- */
+  .tracker{ border: 1px solid var(--rule); border-radius: 3px; background: var(--bg-elev); margin: 22px 0 56px; overflow: hidden; }
+  .tracker-head{ display: grid; grid-template-columns: 84px 1fr 64px 78px 80px 78px 70px; border-bottom: 1px solid var(--rule-strong); background: var(--bg-elev-2); }
+  .tracker-row{ display: grid; grid-template-columns: 84px 1fr 64px 78px 80px 78px 70px; border-top: 1px solid var(--rule); }
   .tracker-row:first-of-type{ border-top: 0; }
-  .tracker-row.pair-divider{ border-top: 1px dashed var(--rule); }
-  .tracker-row.pair-divider:first-of-type{ border-top: 0; }
-  .tc{ padding: 10px 12px; border-right: 1px solid var(--rule); overflow: hidden; }
+  .tracker-row.pair-divider{ border-top: 1px dashed var(--rule-strong); }
+  .tracker-row{ opacity: 0; transform: translateY(8px); }
+  .tracker-row.in{ opacity: 1; transform: none; transition: opacity 0.5s var(--ease), transform 0.5s var(--ease); }
+  .tc{ padding: 11px 12px; border-right: 1px solid var(--rule); overflow: hidden; display: flex; align-items: center; }
   .tc:last-child{ border-right: 0; }
-  .th{ font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-soft); white-space: nowrap; }
+  .th{ font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); white-space: nowrap; }
   .tv{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink); white-space: nowrap; }
-  .tv a{ color: var(--navy); text-decoration: none; border-bottom: 1px solid var(--rule); }
-  .tv a:hover{ border-bottom-color: var(--navy); }
+  .tv a{ color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--rule-strong); transition: border-color 0.2s var(--ease); }
+  .tv a:hover{ border-bottom-color: var(--accent); }
   .tv.pos{ color: var(--pos); }
   .tv.neg{ color: var(--neg); }
+  .dir-long{ color: var(--pos); }
+  .dir-short{ color: var(--neg); }
+  .badge{ display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.04em; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
+  .badge.open{ color: var(--accent-dim); }
 
-  footer{ margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  /* ---------- write-ups ---------- */
+  .positions{ display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
 
-  @media (max-width: 560px){
-    .wrap{ padding: 36px 20px 90px; }
-    .name{ font-size: 34px; }
-    .panel-title{ font-size: 32px; }
-    .paper-title{ font-size: 22px; }
-    .ledger{ grid-template-columns: repeat(3, 1fr); }
-    .ledger .lc:nth-child(3){ border-right: 0; }
-    .ledger .lc:nth-child(-n+3){ border-bottom: 1px solid var(--rule); }
-    .tracker-head,
-    .tracker-row{ grid-template-columns: 70px 90px 60px 60px 60px 52px 60px; }
-    .tc{ padding: 8px 8px; }
-    .th{ font-size: 8.5px; }
-    .tv{ font-size: 12px; }
+  footer{ margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+  *:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  @media (max-width: 600px){
+    .wrap{ padding: 32px 18px 90px; }
+    .name{ font-size: 36px; }
+    .panel-title{ font-size: 31px; }
+    .paper-title{ font-size: 21px; }
+    .paper{ padding: 22px 20px; }
+    .tracker-head, .tracker-row{ grid-template-columns: 62px 1fr 52px 64px 66px 60px 58px; }
+    .tc{ padding: 9px 8px; }
+    .th{ font-size: 8.5px; letter-spacing: 0.06em; }
+    .tv{ font-size: 11.5px; }
+    .badge{ font-size: 9px; padding: 1px 6px; }
   }
-  @media (prefers-reduced-motion: reduce){ *{ transition: none !important; animation: none !important; } }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition: none !important; animation: none !important; }
+    .rise, .reveal, .tracker-row{ opacity: 1 !important; transform: none !important; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <nav class="nav">
-    <span class="who" data-tab="home">Anirudh Venkatesan</span>
+  <nav class="nav rise" data-d="1">
+    <span class="who" data-tab="home">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="brand-mark" aria-hidden="true"><defs><linearGradient id="avg" gradientUnits="userSpaceOnUse" x1="14.3" y1="62.2" x2="77.7" y2="37.8"><stop offset="0.5" stop-color="#F4F1EA"/><stop offset="0.5" stop-color="#88A9DC"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#13161F"/><path d="M14 76 L36 24 L56 76 L86 24" fill="none" stroke="url(#avg)" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="1.7" stroke-linecap="butt"/></svg>
+      <span class="who-name">Anirudh Venkatesan</span>
+    </span>
     <span class="tabs">
       <a data-tab="home">Home</a>
-      <a data-tab="papers">Papers</a>
+      <a data-tab="papers">Academic Research</a>
       <a data-tab="investments">Investments</a>
     </span>
   </nav>
 
   <!-- ===================== HOME ===================== -->
   <section id="home" class="tab-panel">
-    <h1 class="name">Anirudh Venkatesan</h1>
-    <p class="bio">
+    <h1 class="name rise" data-d="2">Anirudh Venkatesan</h1>
+    <p class="bio rise" data-d="3">
       Hi, I'm Ani. I'm an incoming student at the University of Virginia, planning on
       studying economics and statistics. I'm interested in questions where common
       assumptions and the evidence diverge, in markets and in other areas, and in
       writing about them through research and shorter essays. Feel free to
       reach out at <a href="mailto:qpf2aj@virginia.edu">qpf2aj@virginia.edu</a>.
     </p>
-    <p class="links">
-      <a href="https://www.linkedin.com/in/anirudh-venkatesan/" target="_blank" rel="noopener">LinkedIn</a>
+    <p class="links rise" data-d="3">
+      <a href="https://www.linkedin.com/in/anirudh-venkatesan/" target="_blank" rel="noopener">LinkedIn ↗</a>
     </p>
   </section>
 
   <!-- ===================== PAPERS ===================== -->
   <section id="papers" class="tab-panel">
-    <h2 class="panel-title">Papers</h2>
+    <h2 class="panel-title rise" data-d="1">Academic Research</h2>
 
     <div class="papers">
-      <article class="paper">
+      <article class="paper reveal">
         <p class="paper-tag">Market Design</p>
         <h3 class="paper-title">Price Accuracy and Resolution Capture in Prediction Markets</h3>
         <p class="paper-desc">
@@ -191,7 +267,7 @@
         </div>
       </article>
 
-      <article class="paper">
+      <article class="paper reveal">
         <p class="paper-tag">Behavioral Finance</p>
         <h3 class="paper-title">Does Retail Attention Predict Returns? Evidence from Robinhood "Popularity" Data, 2018 to 2020</h3>
         <p class="paper-desc">
@@ -205,7 +281,7 @@
         </a>
       </article>
 
-      <article class="paper">
+      <article class="paper reveal">
         <p class="paper-tag">Sports Economics</p>
         <h3 class="paper-title">What Predicts World Cup Success?</h3>
         <p class="paper-desc">
@@ -219,7 +295,7 @@
         </a>
       </article>
 
-      <article class="paper">
+      <article class="paper reveal">
         <p class="paper-tag">Housing Policy</p>
         <h3 class="paper-title">Reforming Credit Access: Addressing Structural Exclusion in Urban Homeownership</h3>
         <p class="paper-desc">
@@ -237,24 +313,22 @@
 
   <!-- ===================== INVESTMENTS ===================== -->
   <section id="investments" class="tab-panel">
-    <h2 class="panel-title">Investments</h2>
-    <p class="panel-lede">
-      A public, dated record of the calls behind my equity work. Each position is logged
-      at its entry price on the day it's made, marked to the live market, and left to play
-      out in the open, winners and losers both.
-    </p>
+    <h2 class="panel-title rise" data-d="1">Investments</h2>
 
-    <div class="summary">
-      <div class="cell"><p class="k">Calls</p><div class="v">3</div></div>
-      <div class="cell"><p class="k">Open</p><div class="v">3</div></div>
-      <div class="cell"><p class="k">Closed</p><div class="v">0</div></div>
+    <div class="deskline rise" data-d="2" id="deskline">
+      <span class="dot"></span><span id="feedNote">Marked to last close · live feed updates on load</span>
+    </div>
+
+    <div class="summary rise" data-d="3">
+      <div class="cell"><p class="k">Calls</p><div class="v" data-count="3">3</div></div>
+      <div class="cell"><p class="k">Open</p><div class="v" data-count="3">3</div></div>
+      <div class="cell"><p class="k">Closed</p><div class="v" data-count="0">0</div></div>
       <div class="cell"><p class="k">Hit rate</p><div class="v">—</div></div>
       <div class="cell"><p class="k">Total return</p><div class="v" id="totalRet">—</div></div>
     </div>
-    <p class="feed-note" id="feedNote">Marked to last close. Live feed updates on load.</p>
 
-    <!-- ── unified tracker table ── -->
-    <div class="tracker" style="margin-top: 24px;">
+    <!-- ── tracker table ── -->
+    <div class="tracker rise" data-d="4">
       <div class="tracker-head">
         <div class="tc"><span class="th">Date</span></div>
         <div class="tc"><span class="th">Position</span></div>
@@ -265,8 +339,7 @@
         <div class="tc"><span class="th">Status</span></div>
       </div>
 
-      <!-- WBD merger arb -->
-      <div class="tracker-row" data-ticker="WBD" data-direction="long" data-entry="26.95">
+      <div class="tracker-row" data-ticker="WBD" data-direction="long" data-entry="26.95" data-current="26.95">
         <div class="tc"><div class="tv">Jun 23</div></div>
         <div class="tc"><div class="tv"><a href="https://finance.yahoo.com/quote/WBD" target="_blank" rel="noopener">WBD</a></div></div>
         <div class="tc"><div class="tv dir-long">Long</div></div>
@@ -276,8 +349,7 @@
         <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
       </div>
 
-      <!-- TXRH long leg -->
-      <div class="tracker-row" data-ticker="TXRH" data-direction="long" data-entry="177.75">
+      <div class="tracker-row" data-ticker="TXRH" data-direction="long" data-entry="177.75" data-current="177.75">
         <div class="tc"><div class="tv">Jun 20</div></div>
         <div class="tc"><div class="tv"><a href="https://finance.yahoo.com/quote/TXRH" target="_blank" rel="noopener">TXRH</a></div></div>
         <div class="tc"><div class="tv dir-long">Long</div></div>
@@ -287,9 +359,8 @@
         <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
       </div>
 
-      <!-- CAVA short leg (pair with TXRH) -->
-      <div class="tracker-row pair-divider" data-ticker="CAVA" data-direction="short" data-entry="95.00">
-        <div class="tc"><div class="tv" style="color:var(--ink-soft);">↳ pair</div></div>
+      <div class="tracker-row pair-divider" data-ticker="CAVA" data-direction="short" data-entry="95.00" data-current="95.00">
+        <div class="tc"><div class="tv" style="color:var(--ink-faint);">↳ pair</div></div>
         <div class="tc"><div class="tv"><a href="https://finance.yahoo.com/quote/CAVA" target="_blank" rel="noopener">CAVA</a></div></div>
         <div class="tc"><div class="tv dir-short">Short</div></div>
         <div class="tc"><div class="tv">$95.00</div></div>
@@ -298,23 +369,20 @@
         <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
       </div>
 
-      <!-- CI long -->
-      <div class="tracker-row" data-ticker="CI" data-direction="long" data-entry="284.80">
+      <div class="tracker-row" data-ticker="CI" data-direction="long" data-entry="284.80" data-current="285.43">
         <div class="tc"><div class="tv">Jun 15</div></div>
         <div class="tc"><div class="tv"><a href="https://finance.yahoo.com/quote/CI" target="_blank" rel="noopener">CI</a></div></div>
         <div class="tc"><div class="tv dir-long">Long</div></div>
         <div class="tc"><div class="tv">$284.80</div></div>
-        <div class="tc"><div class="tv cur-CI">$285.43</div></div>
-        <div class="tc"><div class="tv ret-CI pos">▲ +0.2%</div></div>
+        <div class="tc"><div class="tv cur-CI">$284.80</div></div>
+        <div class="tc"><div class="tv ret-CI">—</div></div>
         <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
       </div>
     </div>
 
     <!-- ── position writeups ── -->
     <div class="positions">
-
-      <!-- WBD -->
-      <article class="paper">
+      <article class="paper reveal">
         <p class="paper-tag">Equity Research · Merger Arbitrage · Jun 23, 2026</p>
         <h3 class="paper-title">Long Warner Bros. Discovery (NASDAQ: WBD): Arbitraging the Paramount Deal</h3>
         <p class="paper-desc">
@@ -333,8 +401,7 @@
         </a>
       </article>
 
-      <!-- TXRH / CAVA -->
-      <article class="paper">
+      <article class="paper reveal">
         <p class="paper-tag">Equity Research · Pair Trade · Jun 20, 2026</p>
         <h3 class="paper-title">Long Texas Roadhouse, Short Cava</h3>
         <p class="paper-desc">
@@ -353,8 +420,7 @@
         </a>
       </article>
 
-      <!-- CI -->
-      <article class="paper">
+      <article class="paper reveal">
         <p class="paper-tag">Equity Research · Jun 15, 2026</p>
         <h3 class="paper-title">The Cigna Group (NYSE: CI): A Healthcare Giant Mid-Transition</h3>
         <p class="paper-desc">
@@ -370,19 +436,104 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
         </a>
       </article>
-
     </div>
   </section>
 
-  <footer>
-    <span>(c) 2026 Anirudh Venkatesan</span>
+  <footer class="rise" data-d="2">
+    <span>© 2026 Anirudh Venkatesan</span>
     <span>University of Virginia</span>
   </footer>
 
 </div>
 
 <script>
-/* ============ TAB SWITCHING ============ */
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ============ load-in ============ */
+requestAnimationFrame(() => document.body.classList.add('lit'));
+
+/* ============ number animation (terminal odometer) ============ */
+function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+function animateNumber(el, from, to, render, dur){
+  if(REDUCED || from === to){ el.textContent = render(to); return; }
+  const start = performance.now();
+  function frame(now){
+    const t = Math.min(1, (now - start) / dur);
+    el.textContent = render(from + (to - from) * easeOutCubic(t));
+    if(t < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+const money = v => '$' + v.toFixed(2);
+function renderRet(v){
+  const arrow = v >= 0 ? '▲ ' : '▼ ';
+  const sign  = v >= 0 ? '+' : '';
+  return arrow + sign + v.toFixed(1) + '%';
+}
+function setRetClass(el, v){ el.className = el.className.replace(/\s*(pos|neg)/g,'') + (v >= 0 ? ' pos' : ' neg'); }
+
+/* current displayed price per ticker, so live updates tick from here */
+const shown = {};
+
+function settleRow(row, toPrice, dur){
+  const ticker = row.dataset.ticker;
+  const dir    = row.dataset.direction;
+  const entry  = parseFloat(row.dataset.entry);
+  const from   = shown[ticker] != null ? shown[ticker] : entry;
+  shown[ticker] = toPrice;
+
+  const curEl = row.querySelector('.cur-' + ticker);
+  const retEl = row.querySelector('.ret-' + ticker);
+
+  if(curEl) animateNumber(curEl, from, toPrice, money, dur);
+
+  if(retEl){
+    const retOf = p => (dir === 'short' ? (entry - p) / entry : (p - entry) / entry) * 100;
+    const fromR = retOf(from), toR = retOf(toPrice);
+    setRetClass(retEl, toR);
+    animateNumber(retEl, fromR, toR, renderRet, dur);
+  }
+}
+
+/* ============ summary integer counters ============ */
+function runCounters(scope){
+  scope.querySelectorAll('[data-count]').forEach(el => {
+    const to = parseInt(el.dataset.count, 10);
+    animateNumber(el, 0, to, v => String(Math.round(v)), 900);
+  });
+}
+
+/* ============ tracker boot: stagger rows + tick entry→current ============ */
+let investmentsBooted = false;
+function bootInvestments(){
+  if(investmentsBooted) return;
+  investmentsBooted = true;
+  const panel = document.getElementById('investments');
+  runCounters(panel);
+
+  const rows = [...panel.querySelectorAll('.tracker-row')];
+  rows.forEach((row, i) => {
+    const delay = REDUCED ? 0 : 260 + i * 130;
+    setTimeout(() => {
+      row.classList.add('in');
+      const current = parseFloat(row.dataset.current);
+      settleRow(row, current, 1100);   // tick from entry up to last close
+    }, delay);
+  });
+
+  /* then reach for live prices */
+  setTimeout(liveUpdate, REDUCED ? 0 : 260 + rows.length * 130 + 700);
+}
+
+/* ============ scroll reveal for write-ups & papers ============ */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ============ tab switching ============ */
 (function(){
   const panels = document.querySelectorAll('.tab-panel');
   const tabRow = document.querySelectorAll('.tabs a[data-tab]');
@@ -392,6 +543,7 @@
     tabRow.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
     if(location.hash.slice(1) !== name) history.replaceState(null, '', '#' + name);
     window.scrollTo(0, 0);
+    if(name === 'investments') bootInvestments();
   }
   document.querySelectorAll('[data-tab]').forEach(el => {
     el.addEventListener('click', e => { e.preventDefault(); showTab(el.dataset.tab); });
@@ -400,11 +552,11 @@
   showTab(location.hash.slice(1) || 'home');
 })();
 
-/* ============ LIVE PRICE (enhancement only — page works without it) ============ */
+/* ============ live prices (enhancement only — page works without it) ============ */
 const FINNHUB_KEY = "d8pv2m1r01qr03nchfm0d8pv2m1r01qr03nchfmg";
 
 async function fetchPrice(ticker){
-  if(!FINNHUB_KEY || FINNHUB_KEY === "YOUR_FINNHUB_KEY") return null;
+  if(!FINNHUB_KEY) return null;
   try{
     const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_KEY}`);
     const j = await r.json();
@@ -412,17 +564,10 @@ async function fetchPrice(ticker){
   }catch(e){ return null; }
 }
 
-function formatRet(ret, dir){
-  const r = dir === 'short' ? -ret : ret;
-  const arrow = r >= 0 ? '▲ ' : '▼ ';
-  const sign  = r >= 0 ? '+' : '';
-  return { text: arrow + sign + (r * 100).toFixed(1) + '%', pos: r >= 0 };
-}
-
-(async function liveUpdate(){
+async function liveUpdate(){
   const rows = document.querySelectorAll('.tracker-row[data-ticker]');
   let updated = false;
-  const rets = {};   /* ticker -> directional return */
+  const rets = {};
 
   for(const row of rows){
     const ticker = row.dataset.ticker;
@@ -431,49 +576,32 @@ function formatRet(ret, dir){
     const price  = await fetchPrice(ticker);
     if(price == null) continue;
     updated = true;
-
-    /* current price */
-    const curEl = row.querySelector('.cur-' + ticker);
-    if(curEl) curEl.textContent = '$' + price.toFixed(2);
-
-    /* return — short leg gains when price falls */
-    const raw = dir === 'short' ? (entry - price) / entry : (price - entry) / entry;
-    rets[ticker] = raw;
-    const retEl = row.querySelector('.ret-' + ticker);
-    if(retEl){
-      const arrow = raw >= 0 ? '▲ ' : '▼ ';
-      const sign  = raw >= 0 ? '+' : '';
-      retEl.textContent = arrow + sign + (raw * 100).toFixed(1) + '%';
-      retEl.className = 'tv ret-' + ticker + (raw >= 0 ? ' pos' : ' neg');
-    }
+    settleRow(row, price, 800);
+    rets[ticker] = dir === 'short' ? (entry - price) / entry : (price - entry) / entry;
   }
 
-  /* ---- total portfolio return: equal weight per call ----
-     Call 1 = WBD merger arb
-     Call 2 = TXRH/CAVA pair (market-neutral, avg of the two legs)
-     Call 3 = CI                                                   */
+  /* equal-weight total: WBD · TXRH/CAVA pair (avg) · CI */
   const calls = [];
   if(rets.WBD  != null) calls.push(rets.WBD);
   if(rets.TXRH != null && rets.CAVA != null) calls.push((rets.TXRH + rets.CAVA) / 2);
   if(rets.CI   != null) calls.push(rets.CI);
+
   const totEl = document.getElementById('totalRet');
-  if(totEl){
-    if(calls.length){
-      const total = calls.reduce((s, x) => s + x, 0) / calls.length;
-      const arrow = total >= 0 ? '▲ ' : '▼ ';
-      const sign  = total >= 0 ? '+' : '';
-      totEl.textContent = arrow + sign + (total * 100).toFixed(1) + '%';
-      totEl.style.color = total >= 0 ? 'var(--pos)' : 'var(--neg)';
-    } else {
-      totEl.textContent = '—';
-    }
+  if(totEl && calls.length){
+    const total = (calls.reduce((s, x) => s + x, 0) / calls.length) * 100;
+    setRetClass(totEl, total);
+    animateNumber(totEl, 0, total, renderRet, 900);
   }
 
   const note = document.getElementById('feedNote');
-  if(note) note.textContent = updated
-    ? 'Live prices via Finnhub · updated ' + new Date().toLocaleString('en-US')
-    : 'Marked to last close. Live feed unavailable right now.';
-})();
+  const deskline = document.getElementById('deskline');
+  if(updated){
+    deskline.classList.add('live');
+    note.textContent = 'Live · Finnhub · ' + new Date().toLocaleString('en-US');
+  } else {
+    note.textContent = 'Marked to last close · live feed unavailable right now';
+  }
+}
 </script>
 
 </body>
