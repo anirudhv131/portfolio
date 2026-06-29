@@ -75,6 +75,7 @@
   }
   .paper-link:hover{ opacity: 0.6; }
   .paper-link svg{ width: 11px; height: 11px; }
+  .paper-links{ display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
 
   /* ---------- investments: summary ---------- */
   .summary{ display: flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
@@ -170,8 +171,34 @@
 
     <div class="papers">
       <article class="paper">
+        <p class="paper-tag">Market Design</p>
+        <h3 class="paper-title">Price Accuracy and Resolution Capture in Prediction Markets</h3>
+        <p class="paper-desc">
+          This paper distinguishes a prediction market's trading layer, which sets the price, from its resolution layer,
+          which determines the outcome, and argues that the accuracy attributed to these markets belongs only to the
+          former. Using 2,100 resolved Polymarket markets, I find prices are well calibrated while documented
+          resolution failures concentrate in markets with ambiguous settlement rules.
+        </p>
+        <div class="paper-links">
+          <a class="paper-link" href="prediction-markets-resolution-capture.pdf" target="_blank" rel="noopener">
+            Read the paper
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+          </a>
+          <a class="paper-link" href="prediction-markets-code.zip">
+            Data &amp; code
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          </a>
+        </div>
+      </article>
+
+      <article class="paper">
         <p class="paper-tag">Behavioral Finance</p>
         <h3 class="paper-title">Does Retail Attention Predict Returns? Evidence from Robinhood "Popularity" Data, 2018 to 2020</h3>
+        <p class="paper-desc">
+          This paper examines whether changes in retail investor attention, measured through Robinhood ownership data
+          from 2018 to 2020, contain predictive information for subsequent returns. I assess whether attention-driven
+          buying forecasts performance or instead coincides with periods of overvaluation.
+        </p>
         <a class="paper-link" href="attention-predicts-returns.pdf" target="_blank" rel="noopener">
           Read the paper
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
@@ -181,6 +208,11 @@
       <article class="paper">
         <p class="paper-tag">Sports Economics</p>
         <h3 class="paper-title">What Predicts World Cup Success?</h3>
+        <p class="paper-desc">
+          This paper investigates which national characteristics, including economic resources, population, and domestic
+          league strength, predict success in the men's World Cup. I find that several intuitive predictors have limited
+          explanatory power once other factors are accounted for.
+        </p>
         <a class="paper-link" href="world-cup-success.pdf" target="_blank" rel="noopener">
           Read the paper
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
@@ -190,6 +222,11 @@
       <article class="paper">
         <p class="paper-tag">Housing Policy</p>
         <h3 class="paper-title">Reforming Credit Access: Addressing Structural Exclusion in Urban Homeownership</h3>
+        <p class="paper-desc">
+          This paper examines how the design of credit scoring contributes to structural exclusion from urban
+          homeownership, even absent explicit discrimination. I review the mechanisms through which these effects arise
+          and evaluate potential reforms to credit access.
+        </p>
         <a class="paper-link" href="Reforming_Credit_Access_Academic (1).pdf" target="_blank" rel="noopener">
           Read the paper
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
