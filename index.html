@@ -3,27 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22avg%22%20gradientUnits%3D%22userSpaceOnUse%22%20x1%3D%2218.2%22%20y1%3D%2262.4%22%20x2%3D%2273.8%22%20y2%3D%2239.6%22%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%23F4F1EA%22%2F%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%2388A9DC%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2218%22%20fill%3D%22%2313161F%22%2F%3E%3Cpath%20d%3D%22M7%2073%20L29%2073%20L48%2029%20L26%2029%20ZM44%2073%20L66%2073%20L48%2029%20L26%2029%20ZM44%2073%20L66%2073%20L92%2029%20L70%2029%20Z%22%20fill%3D%22url%28%23avg%29%22%2F%3E%3C%2Fsvg%3E">
 <title>Anirudh Venkatesan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* after-hours desk: layered charcoal, warm off-white, semantic P&L */
-    --bg:        #0B0D12;
-    --bg-elev:   #12151D;
-    --bg-elev-2: #171B25;
-    --ink:       #ECE8E0;   /* warm off-white: expensive, not sterile */
-    --ink-soft:  #9097A4;
-    --ink-faint: #5A6170;
-    --rule:        rgba(236,232,224,0.085);
-    --rule-strong: rgba(236,232,224,0.16);
-    --accent:     #9DB8DA;  /* steel blue: interactive only */
-    --accent-dim: #6E8AB0;
-    --pos:        #5FB389;  /* gains */
-    --neg:        #D67D77;  /* losses */
-    --glow:       rgba(157,184,218,0.16);
+    /* scholar's desk: warm paper, one ink, a single oxford-blue accent */
+    --bg:          #F6F1E7;
+    --bg-elev:     #FBF8F1;
+    --bg-elev-2:   #EFE7D6;
+    --ink:         #2A2420;
+    --ink-soft:    #5B5044;
+    --ink-faint:   #8A7F70;
+    --rule:        rgba(42,36,32,0.14);
+    --rule-strong: rgba(42,36,32,0.28);
+    --accent:      #2E4C6D;  /* oxford blue: interactive only */
+    --accent-dim:  #8CA0B3;
+    --pos:         #4B7A5B;  /* gains */
+    --neg:         #9C4A3C;  /* losses */
 
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -34,27 +32,9 @@
   body{
     margin: 0; background: var(--bg); color: var(--ink);
     font-family: 'Inter', sans-serif; line-height: 1.65; font-size: 17px;
-    position: relative; overflow-x: hidden;
   }
 
-  /* ambient atmosphere: faint terminal grid + soft vignette, very low key */
-  body::before{
-    content:""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(var(--rule) 1px, transparent 1px),
-      linear-gradient(90deg, var(--rule) 1px, transparent 1px);
-    background-size: 46px 46px;
-    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,0,0,0.5), transparent 75%);
-            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,0,0,0.5), transparent 75%);
-    opacity: 0.5;
-  }
-  body::after{
-    content:""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background: radial-gradient(110% 70% at 50% -10%, var(--glow), transparent 55%);
-    opacity: 0.7;
-  }
-
-  .wrap{ position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 40px 24px 120px; }
+  .wrap{ max-width: 680px; margin: 0 auto; padding: 40px 24px 120px; }
 
   /* ---------- load orchestration ---------- */
   .rise{ opacity: 0; transform: translateY(14px); }
@@ -67,24 +47,22 @@
   /* ---------- nav ---------- */
   .nav{
     display: flex; justify-content: space-between; align-items: center;
-    padding-bottom: 18px; margin-bottom: 70px; border-bottom: 1px solid var(--rule);
+    padding-bottom: 20px; margin-bottom: 64px; border-bottom: 1px solid var(--ink);
     flex-wrap: wrap; gap: 12px;
   }
   .nav .who{
-    display: inline-flex; align-items: center; gap: 11px;
+    display: inline-flex; align-items: center; gap: 12px;
     font-family: 'Newsreader', serif; font-weight: 600; font-size: 18px;
-    letter-spacing: -0.01em; color: var(--ink); text-decoration: none; cursor: pointer;
+    letter-spacing: 0; color: var(--ink); text-decoration: none; cursor: pointer;
   }
-  .brand-mark{ width: 29px; height: 29px; flex: none; display: block; border-radius: 7px; transition: transform 0.35s var(--ease), filter 0.35s var(--ease); }
-  .nav .who:hover .brand-mark{ transform: translateY(-1px); filter: drop-shadow(0 0 6px var(--glow)); }
   .who-name{ transition: color 0.2s var(--ease); }
   .nav .who:hover .who-name{ color: var(--accent); }
-  .nav .tabs{ font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .nav .tabs{ font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
   .nav .tabs a{
     position: relative; color: var(--ink-soft); text-decoration: none;
     padding-bottom: 4px; cursor: pointer; transition: color 0.2s var(--ease);
   }
-  .nav .tabs a + a{ margin-left: 22px; }
+  .nav .tabs a + a{ margin-left: 24px; }
   .nav .tabs a::after{
     content:""; position: absolute; left: 0; right: 100%; bottom: 0; height: 1px;
     background: var(--accent); transition: right 0.32s var(--ease);
@@ -100,27 +78,27 @@
 
   /* ---------- home ---------- */
   .eyebrow{
-    font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase;
-    letter-spacing: 0.18em; color: var(--ink-faint); margin: 0 0 20px;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--ink-faint); margin: 0 0 18px;
     display: flex; align-items: center; gap: 10px;
   }
   .eyebrow::before{ content:""; width: 22px; height: 1px; background: var(--accent-dim); }
   .name{
     font-family: 'Newsreader', serif; font-weight: 600; font-size: 46px;
-    letter-spacing: -0.015em; line-height: 1.05; margin: 0 0 22px;
+    letter-spacing: -0.015em; line-height: 1.05; margin: 0 0 26px;
   }
-  .bio{ font-size: 17px; color: var(--ink); max-width: 560px; margin: 0; }
+  .bio{ font-family: 'Newsreader', serif; font-size: 19px; color: var(--ink); max-width: 580px; margin: 0; }
   .bio a, .links a{
     color: var(--accent); text-decoration: none;
     border-bottom: 1px solid var(--rule-strong); transition: border-color 0.2s var(--ease);
   }
   .bio a:hover, .links a:hover{ border-bottom-color: var(--accent); }
-  .links{ margin-top: 28px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+  .links{ margin-top: 30px; font-family: 'Inter', sans-serif; font-size: 13.5px; }
   .links a{ border-bottom-color: transparent; }
 
   /* ---------- panel heading ---------- */
-  .panel-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 40px; letter-spacing: -0.015em; margin: 0 0 14px; }
-  .panel-lede{ font-size: 16px; color: var(--ink-soft); max-width: 580px; margin: 0 0 34px; }
+  .panel-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 38px; letter-spacing: -0.015em; margin: 0 0 14px; }
+  .panel-lede{ font-family: 'Newsreader', serif; font-style: italic; font-size: 17px; color: var(--ink-soft); max-width: 580px; margin: 0 0 36px; }
 
   /* ---------- scroll reveal ---------- */
   .reveal{ opacity: 0; transform: translateY(20px); }
@@ -129,15 +107,15 @@
   /* ---------- papers / report blocks ---------- */
   .papers{ display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
   .paper{
-    border: 1px solid var(--rule); border-radius: 3px; background: var(--bg-elev);
-    padding: 26px 26px 24px; transition: border-color 0.3s var(--ease), background 0.3s var(--ease), transform 0.3s var(--ease);
+    border: 1px solid var(--rule); background: var(--bg-elev);
+    padding: 28px 28px 26px; transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
   }
-  .paper:hover{ border-color: var(--rule-strong); background: var(--bg-elev-2); transform: translateY(-2px); }
-  .paper-tag{ font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-faint); margin: 0 0 10px; }
-  .paper-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 24px; line-height: 1.28; margin: 0 0 12px; letter-spacing: -0.01em; }
-  .paper-desc{ color: var(--ink-soft); margin: 0 0 18px; font-size: 15.5px; }
+  .paper:hover{ border-color: var(--rule-strong); background: var(--bg-elev-2); }
+  .paper-tag{ font-family: 'Newsreader', serif; font-style: italic; font-size: 13.5px; color: var(--accent); margin: 0 0 10px; }
+  .paper-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 24px; line-height: 1.32; margin: 0 0 12px; letter-spacing: -0.005em; }
+  .paper-desc{ font-family: 'Newsreader', serif; color: var(--ink-soft); margin: 0 0 18px; font-size: 16.5px; line-height: 1.62; }
   .paper-link{
-    font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: var(--accent); text-decoration: none;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--accent); text-decoration: none;
     display: inline-flex; align-items: center; gap: 7px;
   }
   .paper-link svg{ width: 12px; height: 12px; transition: transform 0.25s var(--ease); }
@@ -146,27 +124,21 @@
 
   /* ---------- investments: live status row ---------- */
   .deskline{
-    display: flex; align-items: center; gap: 9px; margin: 0 0 18px;
-    font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.08em;
-    color: var(--ink-faint); text-transform: uppercase;
+    display: flex; align-items: center; gap: 9px; margin: 0 0 20px;
+    font-family: 'Inter', sans-serif; font-size: 12.5px; color: var(--ink-faint);
   }
-  .dot{ width: 7px; height: 7px; border-radius: 50%; background: var(--ink-faint); flex: none; }
-  .deskline.live .dot{ background: var(--pos); box-shadow: 0 0 0 0 rgba(95,179,137,0.55); animation: pulse 2.2s infinite; }
-  @keyframes pulse{
-    0%{ box-shadow: 0 0 0 0 rgba(95,179,137,0.5); }
-    70%{ box-shadow: 0 0 0 7px rgba(95,179,137,0); }
-    100%{ box-shadow: 0 0 0 0 rgba(95,179,137,0); }
-  }
+  .dot{ width: 6px; height: 6px; border-radius: 50%; background: var(--ink-faint); flex: none; }
+  .deskline.live .dot{ background: var(--pos); }
 
   /* ---------- investments: summary ---------- */
-  .summary{ display: flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; background: var(--bg-elev); }
+  .summary{ display: flex; flex-wrap: wrap; border: 1px solid var(--rule); background: var(--bg-elev); }
   .summary .cell{ flex: 1 1 auto; min-width: 104px; padding: 16px 18px; border-right: 1px solid var(--rule); }
   .summary .cell:last-child{ border-right: 0; }
-  .summary .k{ font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.13em; color: var(--ink-faint); margin: 0 0 7px; }
-  .summary .v{ font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 500; color: var(--ink); }
+  .summary .k{ font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-faint); margin: 0 0 7px; }
+  .summary .v{ font-family: 'Newsreader', serif; font-size: 22px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
 
   /* ---------- investments: tracker ---------- */
-  .tracker{ border: 1px solid var(--rule); border-radius: 3px; background: var(--bg-elev); margin: 22px 0 56px; overflow: hidden; }
+  .tracker{ border: 1px solid var(--rule); background: var(--bg-elev); margin: 24px 0 14px; }
   .tracker-head{ display: grid; grid-template-columns: 84px 1fr 64px 78px 80px 78px 70px; border-bottom: 1px solid var(--rule-strong); background: var(--bg-elev-2); }
   .tracker-row{ display: grid; grid-template-columns: 84px 1fr 64px 78px 80px 78px 70px; border-top: 1px solid var(--rule); }
   .tracker-row:first-of-type{ border-top: 0; }
@@ -175,99 +147,41 @@
   .tracker-row.in{ opacity: 1; transform: none; transition: opacity 0.5s var(--ease), transform 0.5s var(--ease); }
   .tc{ padding: 11px 12px; border-right: 1px solid var(--rule); overflow: hidden; display: flex; align-items: center; }
   .tc:last-child{ border-right: 0; }
-  .th{ font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); white-space: nowrap; }
-  .tv{ font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink); white-space: nowrap; }
+  .th{ font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); white-space: nowrap; }
+  .tv{ font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .tv a{ color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--rule-strong); transition: border-color 0.2s var(--ease); }
   .tv a:hover{ border-bottom-color: var(--accent); }
   .tv.pos{ color: var(--pos); }
   .tv.neg{ color: var(--neg); }
   .dir-long{ color: var(--pos); }
   .dir-short{ color: var(--neg); }
-  .badge{ display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.04em; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
+  .badge{ display: inline-block; font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 500; letter-spacing: 0.02em; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
   .badge.open{ color: var(--accent-dim); }
+  .table-note{ font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.6; color: var(--ink-faint); margin: 0 0 56px; }
+  .table-note b{ color: var(--ink-soft); font-weight: 600; }
 
   /* ---------- write-ups ---------- */
   .positions{ display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
 
-  /* ---------- simulator ---------- */
-  .sim-block{
-    border: 1px solid var(--rule); border-radius: 3px; background: var(--bg-elev);
-    padding: 22px 22px 20px; margin-top: 14px;
-  }
-  .sim-block:first-of-type{ margin-top: 8px; }
-  .sim-controls{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px 28px; }
-  .ctl{ display: block; }
-  .ctl-k{
-    display: flex; justify-content: space-between; align-items: baseline;
-    font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-transform: uppercase;
-    letter-spacing: 0.12em; color: var(--ink-faint); margin-bottom: 10px;
-  }
-  .ctl-v{ color: var(--accent); font-size: 12.5px; letter-spacing: 0.03em; text-transform: none; }
-  input[type="range"]{
-    -webkit-appearance: none; appearance: none; display: block; width: 100%;
-    height: 18px; background: transparent; margin: 0; cursor: pointer;
-  }
-  input[type="range"]::-webkit-slider-runnable-track{ height: 2px; background: var(--rule-strong); border-radius: 999px; }
-  input[type="range"]::-moz-range-track{ height: 2px; background: var(--rule-strong); border-radius: 999px; }
-  input[type="range"]::-webkit-slider-thumb{
-    -webkit-appearance: none; appearance: none; width: 13px; height: 13px; margin-top: -5.5px;
-    border-radius: 50%; background: var(--accent); border: 0;
-    transition: box-shadow 0.2s var(--ease);
-  }
-  input[type="range"]::-moz-range-thumb{
-    width: 13px; height: 13px; border-radius: 50%; background: var(--accent); border: 0;
-    transition: box-shadow 0.2s var(--ease);
-  }
-  input[type="range"]:hover::-webkit-slider-thumb{ box-shadow: 0 0 0 5px var(--glow); }
-  input[type="range"]:hover::-moz-range-thumb{ box-shadow: 0 0 0 5px var(--glow); }
-  .sim-actions{ grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 2px; }
-  .sim-btn{
-    font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase;
-    letter-spacing: 0.1em; color: var(--accent); background: transparent;
-    border: 1px solid var(--rule-strong); border-radius: 3px; padding: 8px 15px; cursor: pointer;
-    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
-  }
-  .sim-btn:hover{ border-color: var(--accent); }
-  .sim-seed{ font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.06em; color: var(--ink-faint); }
-  .sim-cap{
-    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase;
-    letter-spacing: 0.1em; color: var(--ink-faint); margin: 0 0 14px; line-height: 1.7;
-  }
-  .sim-canvas{ display: block; width: 100%; height: 300px; }
-  .sim-canvas.short{ height: 180px; }
-  .sim-table{ width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
-  .sim-table th{
-    font-size: 9.5px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.1em;
-    color: var(--ink-faint); text-align: right; padding: 0 12px 9px;
-    border-bottom: 1px solid var(--rule-strong);
-  }
-  .sim-table th:first-child{ text-align: left; padding-left: 0; }
-  .sim-table td{ padding: 9px 12px; border-bottom: 1px solid var(--rule); text-align: right; color: var(--ink); white-space: nowrap; }
-  .sim-table td:first-child{ text-align: left; padding-left: 0; color: var(--ink-soft); }
-  .sim-table tr:last-child td{ border-bottom: 0; }
-  .sim-note{ color: var(--ink-soft); font-size: 14.5px; margin: 18px 0 0; }
+  footer{ margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: 'Inter', sans-serif; font-size: 12.5px; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
-  footer{ margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-
-  *:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  *:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
 
   @media (max-width: 600px){
     .wrap{ padding: 32px 18px 90px; }
-    .name{ font-size: 36px; }
-    .panel-title{ font-size: 31px; }
+    .name{ font-size: 34px; }
+    .bio{ font-size: 17.5px; }
+    .bio::first-letter{ font-size: 2.7em; }
+    .panel-title{ font-size: 29px; }
+    .panel-lede{ font-size: 16px; }
     .paper-title{ font-size: 21px; }
+    .paper-desc{ font-size: 15.5px; }
     .paper{ padding: 22px 20px; }
     .tracker-head, .tracker-row{ grid-template-columns: 62px 1fr 52px 64px 66px 60px 58px; }
     .tc{ padding: 9px 8px; }
-    .th{ font-size: 8.5px; letter-spacing: 0.06em; }
+    .th{ font-size: 8.5px; letter-spacing: 0.05em; }
     .tv{ font-size: 11.5px; }
     .badge{ font-size: 9px; padding: 1px 6px; }
-    .sim-controls{ grid-template-columns: 1fr; gap: 18px; }
-    .sim-block{ padding: 18px 16px 16px; }
-    .sim-canvas{ height: 240px; }
-    .sim-canvas.short{ height: 160px; }
-    .sim-table{ font-size: 11.5px; }
-    .sim-table td, .sim-table th{ padding-left: 8px; padding-right: 8px; }
   }
   @media (prefers-reduced-motion: reduce){
     *{ transition: none !important; animation: none !important; }
@@ -280,14 +194,12 @@
 
   <nav class="nav rise" data-d="1">
     <span class="who" data-tab="home">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="brand-mark" aria-hidden="true"><defs><linearGradient id="avg" gradientUnits="userSpaceOnUse" x1="18.2" y1="62.4" x2="73.8" y2="39.6"><stop offset="0.5" stop-color="#F4F1EA"/><stop offset="0.5" stop-color="#88A9DC"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#13161F"/><path d="M7 73 L29 73 L48 29 L26 29 ZM44 73 L66 73 L48 29 L26 29 ZM44 73 L66 73 L92 29 L70 29 Z" fill="url(#avg)"/></svg>
       <span class="who-name">Anirudh Venkatesan</span>
     </span>
     <span class="tabs">
       <a data-tab="home">Home</a>
       <a data-tab="papers">Academic Research</a>
       <a data-tab="investments">Investments</a>
-      <a data-tab="simulator">Simulator</a>
     </span>
   </nav>
 
@@ -379,6 +291,7 @@
   <!-- ===================== INVESTMENTS ===================== -->
   <section id="investments" class="tab-panel">
     <h2 class="panel-title rise" data-d="1">Investments</h2>
+    <p class="panel-lede rise" data-d="2">A public record of individual equity and pair-trade positions, dated at initiation and marked to the latest available price.</p>
 
     <div class="deskline rise" data-d="2" id="deskline">
       <span class="dot"></span><span id="feedNote">Marked to last close · live feed updates on load</span>
@@ -444,6 +357,7 @@
         <div class="tc"><div class="tv"><span class="badge open">Open</span></div></div>
       </div>
     </div>
+    <p class="table-note rise" data-d="4"><b>Table 1.</b> Positions marked to the latest available price; returns are computed relative to entry, with the Texas Roadhouse–Cava pair counted once as a combined spread.</p>
 
     <!-- ── position writeups ── -->
     <div class="positions">
@@ -501,82 +415,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
         </a>
       </article>
-    </div>
-  </section>
-
-  <!-- ===================== SIMULATOR ===================== -->
-  <section id="simulator" class="tab-panel">
-    <h2 class="panel-title rise" data-d="1">Simulator</h2>
-    <p class="panel-lede rise" data-d="2">
-      A Monte Carlo laboratory for geometric Brownian motion, the price process behind
-      Black-Scholes. Terminal prices are drawn from the exact solution of the SDE, so the
-      only error is sampling error, and every run is checked against the closed-form
-      lognormal benchmark. Runs are seeded, so any result here can be reproduced.
-    </p>
-
-    <div class="sim-block rise" data-d="3">
-      <div class="sim-controls">
-        <label class="ctl">
-          <span class="ctl-k">Drift μ (annual) <span class="ctl-v" id="muVal">6.0%</span></span>
-          <input type="range" id="muIn" min="-10" max="20" step="0.5" value="6"
-                 aria-label="Annual drift in percent">
-        </label>
-        <label class="ctl">
-          <span class="ctl-k">Volatility σ (annual) <span class="ctl-v" id="sigVal">18%</span></span>
-          <input type="range" id="sigIn" min="5" max="80" step="1" value="18"
-                 aria-label="Annual volatility in percent">
-        </label>
-        <label class="ctl">
-          <span class="ctl-k">Horizon T <span class="ctl-v" id="tVal">3.0 yr</span></span>
-          <input type="range" id="tIn" min="0.25" max="10" step="0.25" value="3"
-                 aria-label="Horizon in years">
-        </label>
-        <label class="ctl">
-          <span class="ctl-k">Paths N <span class="ctl-v" id="nVal">10,000</span></span>
-          <input type="range" id="nIn" min="500" max="50000" step="500" value="10000"
-                 aria-label="Number of simulated paths">
-        </label>
-        <div class="sim-actions">
-          <button type="button" class="sim-btn" id="simReseed">New seed</button>
-          <span class="sim-seed" id="simSeed">seed 20260701</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="sim-block reveal">
-      <p class="sim-cap">Sample paths · start $100 · dashed lines: theoretical 5th and 95th percentiles · solid line: theoretical median</p>
-      <canvas id="simPaths" class="sim-canvas" role="img"
-              aria-label="Fan chart of simulated geometric Brownian motion price paths with theoretical percentile bands"></canvas>
-    </div>
-
-    <div class="sim-block reveal">
-      <p class="sim-cap">Terminal price distribution · bars: simulation · curve: closed-form lognormal density</p>
-      <canvas id="simHist" class="sim-canvas short" role="img"
-              aria-label="Histogram of simulated terminal prices with the exact lognormal density overlaid"></canvas>
-    </div>
-
-    <div class="sim-block reveal">
-      <p class="sim-cap">Simulation against theory</p>
-      <table class="sim-table" aria-live="polite">
-        <thead>
-          <tr><th scope="col">Statistic of S(T)</th><th scope="col">Simulated</th><th scope="col">Theoretical</th></tr>
-        </thead>
-        <tbody id="simStats"></tbody>
-      </table>
-      <p class="sim-note" id="simNote"></p>
-      <p class="sim-note">
-        Method notes. Each terminal price is drawn from the exact solution
-        S(T) = S(0)·exp((μ − σ²/2)T + σ√T·Z), so there is no discretization error, only Monte
-        Carlo error, which shrinks at rate 1/√N. The drawn paths above use the same exact
-        transition applied step by step, which is valid because GBM increments are independent
-        and lognormal. Random numbers come from a seeded Mulberry32 generator through a
-        Box-Muller transform, so a given seed always reproduces the same run. Theoretical
-        percentiles use Acklam's rational approximation to the inverse normal CDF (absolute
-        error below 1.15e-9). One thing worth noticing as you move the sliders: for large σ or
-        long T the mean pulls far above the median, because the lognormal is right skewed, and
-        the probability of finishing below the start can stay high even when the average
-        outcome looks strong. The average path is not the typical path.
-      </p>
     </div>
   </section>
 
@@ -685,7 +523,6 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
     if(location.hash.slice(1) !== name) history.replaceState(null, '', '#' + name);
     window.scrollTo(0, 0);
     if(name === 'investments') bootInvestments();
-    if(name === 'simulator') bootSimulator();
   }
   document.querySelectorAll('[data-tab]').forEach(el => {
     el.addEventListener('click', e => { e.preventDefault(); showTab(el.dataset.tab); });
@@ -694,16 +531,39 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   showTab(location.hash.slice(1) || 'home');
 })();
 
-/* ============ live prices (enhancement only: page works without it) ============ */
-const FINNHUB_KEY = "";   /* rotate the old key at finnhub.io; it was public in this file */
+/* ============ live prices (enhancement only: page works without it) ============
+   Two sources are tried in order:
+     1. Stooq  — public CSV quotes, no key. Works when the visitor's browser
+                 accepts its response (some setups block it on CORS).
+     2. Finnhub — reliable, but needs a free key from finnhub.io. Paste one into
+                 FINNHUB_KEY below and it becomes the guaranteed path.
+   If both come up empty, each row keeps its last marked close, so the page still
+   reads correctly. */
+const FINNHUB_KEY = "";   /* paste a free key from finnhub.io to guarantee live quotes */
 
-async function fetchPrice(ticker){
+async function fromStooq(ticker){
+  try{
+    const url = `https://stooq.com/q/l/?s=${encodeURIComponent(ticker.toLowerCase())}.us&f=sd2t2ohlcv&h&e=csv`;
+    const r = await fetch(url);
+    if(!r.ok) return null;
+    /* header row then one data row: Symbol,Date,Time,Open,High,Low,Close,Volume */
+    const cols = (await r.text()).trim().split('\n')[1]?.split(',');
+    const close = cols && cols.length >= 7 ? parseFloat(cols[6]) : NaN;
+    return (isFinite(close) && close > 0) ? close : null;
+  }catch(e){ return null; }
+}
+
+async function fromFinnhub(ticker){
   if(!FINNHUB_KEY) return null;
   try{
     const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_KEY}`);
     const j = await r.json();
     return (j && typeof j.c === "number" && j.c > 0) ? j.c : null;
   }catch(e){ return null; }
+}
+
+async function fetchPrice(ticker){
+  return (await fromStooq(ticker)) ?? (await fromFinnhub(ticker));
 }
 
 async function liveUpdate(){
@@ -739,378 +599,12 @@ async function liveUpdate(){
   const deskline = document.getElementById('deskline');
   if(updated){
     deskline.classList.add('live');
-    note.textContent = 'Live · Finnhub · ' + new Date().toLocaleString('en-US');
+    note.textContent = 'Live · ' + new Date().toLocaleString('en-US');
   } else {
     note.textContent = 'Marked to last close · live feed unavailable right now';
   }
 }
 
-/* ============================================================
-   SIMULATOR — Monte Carlo lab for geometric Brownian motion
-   dS = μS dt + σS dW, with exact solution
-   S(T) = S(0) · exp((μ − σ²/2)T + σ√T·Z),  Z ~ N(0,1)
-   Terminal prices are sampled from this closed form directly,
-   so the simulation carries no discretization error, only
-   Monte Carlo sampling error of order 1/√N.
-   ============================================================ */
-
-/* ---- deterministic RNG: Mulberry32. Seeded, fast, good enough
-   statistical quality for visual Monte Carlo work. Seeding makes
-   every run reproducible, which matters more here than raw
-   cryptographic quality. ---- */
-function mulberry32(a){
-  return function(){
-    a |= 0; a = (a + 0x6D2B79F5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-/* ---- standard normals via Box-Muller, caching the spare draw
-   so no uniform randomness is wasted ---- */
-function makeGauss(rand){
-  let spare = null;
-  return function(){
-    if(spare !== null){ const s = spare; spare = null; return s; }
-    let u = 0;
-    do { u = rand(); } while(u === 0);         /* avoid log(0) */
-    const v = rand();
-    const r = Math.sqrt(-2 * Math.log(u));
-    spare = r * Math.sin(2 * Math.PI * v);
-    return r * Math.cos(2 * Math.PI * v);
-  };
-}
-
-/* ---- standard normal CDF via the Abramowitz & Stegun 7.1.26
-   erf approximation (max abs error ~7.5e-8) ---- */
-function normCdf(x){
-  const t = 1 / (1 + 0.3275911 * Math.abs(x) / Math.SQRT2);
-  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t
-              - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x / 2);
-  return x >= 0 ? 0.5 * (1 + y) : 0.5 * (1 - y);
-}
-
-/* ---- inverse standard normal CDF, Acklam's rational
-   approximation (abs error < 1.15e-9), used for the exact
-   theoretical percentile bands ---- */
-function normInv(p){
-  const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
-              1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
-  const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
-              6.680131188771972e+01, -1.328068155288572e+01];
-  const c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
-             -2.549732539343734e+00,  4.374664141464968e+00,  2.938163982698783e+00];
-  const d = [ 7.784695709041462e-03,  3.224671290700398e-01,  2.445134137142996e+00,
-              3.754408661907416e+00];
-  const pl = 0.02425;
-  let q, r;
-  if(p < pl){
-    q = Math.sqrt(-2 * Math.log(p));
-    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
-           ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
-  }
-  if(p > 1 - pl){
-    q = Math.sqrt(-2 * Math.log(1 - p));
-    return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5]) /
-            ((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
-  }
-  q = p - 0.5; r = q * q;
-  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q /
-         (((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
-}
-
-const SIM = {
-  S0: 100,              /* start price, held fixed so results read as index levels */
-  seed: 20260701,
-  drawPaths: 64,        /* paths actually drawn; stats use all N */
-  drawSteps: 120,       /* time steps for the drawn paths */
-  booted: false,
-  raf: null
-};
-
-function simParams(){
-  return {
-    mu:  parseFloat(document.getElementById('muIn').value)  / 100,
-    sig: parseFloat(document.getElementById('sigIn').value) / 100,
-    T:   parseFloat(document.getElementById('tIn').value),
-    N:   parseInt(document.getElementById('nIn').value, 10)
-  };
-}
-
-/* read the site's CSS variables so the canvases stay on-palette */
-function simColors(){
-  const cs = getComputedStyle(document.documentElement);
-  const get = n => cs.getPropertyValue(n).trim();
-  return {
-    ink: get('--ink'), soft: get('--ink-soft'), faint: get('--ink-faint'),
-    accent: get('--accent'), accentDim: get('--accent-dim'),
-    pos: get('--pos'), neg: get('--neg'), rule: get('--rule-strong')
-  };
-}
-
-/* size a canvas to its CSS box at device pixel ratio */
-function fitCanvas(cv){
-  const dpr = window.devicePixelRatio || 1;
-  const w = cv.clientWidth, h = cv.clientHeight;
-  if(cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)){
-    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-  }
-  const ctx = cv.getContext('2d');
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  return { ctx, w, h };
-}
-
-function fmtMoney(v){ return '$' + v.toFixed(2); }
-function fmtPct(v){ return (v * 100).toFixed(1) + '%'; }
-
-function runSimulation(){
-  const { mu, sig, T, N } = simParams();
-  const { S0 } = SIM;
-
-  /* lognormal parameters of S(T): log S(T) ~ N(log S0 + m, s²) */
-  const m = (mu - 0.5 * sig * sig) * T;
-  const s = sig * Math.sqrt(T);
-
-  /* ---- 1. terminal distribution: N exact draws ---- */
-  const gauss = makeGauss(mulberry32(SIM.seed));
-  const st = new Float64Array(N);
-  let sum = 0, sumSq = 0, losses = 0;
-  for(let i = 0; i < N; i++){
-    const x = S0 * Math.exp(m + s * gauss());
-    st[i] = x; sum += x; sumSq += x * x;
-    if(x < S0) losses++;
-  }
-  st.sort();
-  const mean = sum / N;
-  const sd   = Math.sqrt(Math.max(0, sumSq / N - mean * mean));
-  const q = p => st[Math.min(N - 1, Math.max(0, Math.round(p * (N - 1))))];
-
-  const sim = {
-    mean, median: q(0.5), p05: q(0.05), p95: q(0.95),
-    pLoss: losses / N, se: sd / Math.sqrt(N)
-  };
-  const theo = {
-    mean:   S0 * Math.exp(mu * T),
-    median: S0 * Math.exp(m),
-    p05:    S0 * Math.exp(m + s * normInv(0.05)),
-    p95:    S0 * Math.exp(m + s * normInv(0.95)),
-    pLoss:  normCdf(-m / s)
-  };
-
-  /* ---- 2. drawn paths: exact GBM transition per step (valid
-     because GBM increments are independent lognormal) ---- */
-  const gauss2 = makeGauss(mulberry32(SIM.seed + 1));
-  const steps = SIM.drawSteps, dt = T / steps, sdt = sig * Math.sqrt(dt);
-  const mdt = (mu - 0.5 * sig * sig) * dt;
-  const nDraw = Math.min(SIM.drawPaths, N);
-  const paths = [];
-  for(let i = 0; i < nDraw; i++){
-    const p = new Float64Array(steps + 1);
-    p[0] = S0;
-    for(let k = 1; k <= steps; k++) p[k] = p[k - 1] * Math.exp(mdt + sdt * gauss2());
-    paths.push(p);
-  }
-
-  drawPaths(paths, { S0, m, s, mu, sig, T, steps });
-  drawHist(st, { S0, m, s });
-  writeStats(sim, theo, N);
-}
-
-function drawPaths(paths, P){
-  const cv = document.getElementById('simPaths');
-  const { ctx, w, h } = fitCanvas(cv);
-  const C = simColors();
-  ctx.clearRect(0, 0, w, h);
-
-  const padL = 46, padR = 10, padT = 8, padB = 22;
-  const iw = w - padL - padR, ih = h - padT - padB;
-
-  /* y range from theoretical 0.5th to 99.5th percentile at T,
-     so the scale is stable across reruns of the same settings */
-  const zLo = normInv(0.005), zHi = normInv(0.995);
-  let yMin = Math.min(P.S0 * 0.9, P.S0 * Math.exp(P.m + P.s * zLo));
-  let yMax = Math.max(P.S0 * 1.1, P.S0 * Math.exp(P.m + P.s * zHi));
-  const X = f => padL + f * iw;                                  /* f in [0,1] time fraction */
-  const Y = v => padT + ih * (1 - (v - yMin) / (yMax - yMin));
-
-  /* axes + gridlines */
-  ctx.font = '10px "IBM Plex Mono", monospace';
-  ctx.fillStyle = C.faint; ctx.strokeStyle = C.rule; ctx.lineWidth = 1;
-  const yTicks = 4;
-  for(let i = 0; i <= yTicks; i++){
-    const v = yMin + (yMax - yMin) * i / yTicks;
-    const y = Y(v);
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
-    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    ctx.fillText('$' + Math.round(v), padL - 7, y);
-  }
-  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  for(let i = 0; i <= 4; i++){
-    const f = i / 4;
-    ctx.fillText((f * P.T).toFixed(1) + 'y', X(f), h - padB + 7);
-  }
-
-  /* simulated paths, faint, colored by final outcome */
-  paths.forEach(p => {
-    const up = p[p.length - 1] >= P.S0;
-    ctx.strokeStyle = up ? C.pos : C.neg;
-    ctx.globalAlpha = 0.22; ctx.lineWidth = 1;
-    ctx.beginPath();
-    for(let k = 0; k < p.length; k++){
-      const x = X(k / P.steps), y = Y(Math.min(Math.max(p[k], yMin), yMax));
-      k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  });
-  ctx.globalAlpha = 1;
-
-  /* theoretical quantile curves of S(t): q_p(t) = S0·exp((μ−σ²/2)t + σ√t·z_p) */
-  function quantCurve(z, dash){
-    ctx.strokeStyle = C.accentDim; ctx.lineWidth = 1.4;
-    ctx.setLineDash(dash);
-    ctx.beginPath();
-    const K = 80;
-    for(let k = 0; k <= K; k++){
-      const t = P.T * k / K;
-      const v = P.S0 * Math.exp((P.mu - 0.5 * P.sig * P.sig) * t + P.sig * Math.sqrt(t) * z);
-      const x = X(k / K), y = Y(Math.min(Math.max(v, yMin), yMax));
-      k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke(); ctx.setLineDash([]);
-  }
-  quantCurve(normInv(0.05), [4, 4]);
-  quantCurve(normInv(0.95), [4, 4]);
-  quantCurve(0, []);                     /* z = 0 gives the median path */
-}
-
-function drawHist(st, P){
-  const cv = document.getElementById('simHist');
-  const { ctx, w, h } = fitCanvas(cv);
-  const C = simColors();
-  ctx.clearRect(0, 0, w, h);
-
-  const padL = 46, padR = 10, padT = 6, padB = 22;
-  const iw = w - padL - padR, ih = h - padT - padB;
-
-  /* bins span the theoretical 0.2nd to 99.5th percentile */
-  const lo = P.S0 * Math.exp(P.m + P.s * normInv(0.002));
-  const hi = P.S0 * Math.exp(P.m + P.s * normInv(0.995));
-  const nb = 44, bw = (hi - lo) / nb;
-  const bins = new Float64Array(nb);
-  let inRange = 0;
-  for(let i = 0; i < st.length; i++){
-    const b = Math.floor((st[i] - lo) / bw);
-    if(b >= 0 && b < nb){ bins[b]++; inRange++; }
-  }
-  /* convert counts to density so the analytic pdf overlays directly */
-  for(let b = 0; b < nb; b++) bins[b] = bins[b] / (st.length * bw);
-
-  /* analytic lognormal density of S(T) */
-  const pdf = x => {
-    if(x <= 0) return 0;
-    const z = (Math.log(x / P.S0) - P.m) / P.s;
-    return Math.exp(-0.5 * z * z) / (x * P.s * Math.sqrt(2 * Math.PI));
-  };
-  let dMax = 0;
-  for(let b = 0; b < nb; b++) dMax = Math.max(dMax, bins[b]);
-  for(let k = 0; k <= 100; k++) dMax = Math.max(dMax, pdf(lo + (hi - lo) * k / 100));
-  dMax *= 1.06;
-
-  const X = v => padL + (v - lo) / (hi - lo) * iw;
-  const Y = d => padT + ih * (1 - d / dMax);
-
-  /* bars, colored by side of the start price */
-  for(let b = 0; b < nb; b++){
-    const x0 = X(lo + b * bw), x1 = X(lo + (b + 1) * bw);
-    const mid = lo + (b + 0.5) * bw;
-    ctx.fillStyle = mid >= P.S0 ? C.pos : C.neg;
-    ctx.globalAlpha = 0.30;
-    ctx.fillRect(x0 + 0.5, Y(bins[b]), Math.max(1, x1 - x0 - 1), padT + ih - Y(bins[b]));
-  }
-  ctx.globalAlpha = 1;
-
-  /* start-price marker */
-  ctx.strokeStyle = C.faint; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(X(P.S0), padT); ctx.lineTo(X(P.S0), padT + ih); ctx.stroke();
-  ctx.setLineDash([]);
-
-  /* closed-form density curve */
-  ctx.strokeStyle = C.accent; ctx.lineWidth = 1.6;
-  ctx.beginPath();
-  for(let k = 0; k <= 160; k++){
-    const v = lo + (hi - lo) * k / 160;
-    const x = X(v), y = Y(pdf(v));
-    k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-
-  /* x-axis labels */
-  ctx.font = '10px "IBM Plex Mono", monospace';
-  ctx.fillStyle = C.faint; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-  for(let i = 0; i <= 4; i++){
-    const v = lo + (hi - lo) * i / 4;
-    ctx.fillText('$' + Math.round(v), X(v), h - padB + 7);
-  }
-}
-
-function writeStats(sim, theo, N){
-  const rows = [
-    ['Mean',            fmtMoney(sim.mean),   fmtMoney(theo.mean)],
-    ['Median',          fmtMoney(sim.median), fmtMoney(theo.median)],
-    ['5th percentile',  fmtMoney(sim.p05),    fmtMoney(theo.p05)],
-    ['95th percentile', fmtMoney(sim.p95),    fmtMoney(theo.p95)],
-    ['P(finish below start)', fmtPct(sim.pLoss), fmtPct(theo.pLoss)]
-  ];
-  document.getElementById('simStats').innerHTML = rows.map(r =>
-    `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`
-  ).join('');
-  document.getElementById('simNote').textContent =
-    `N = ${N.toLocaleString('en-US')} draws · Monte Carlo standard error of the mean ≈ ` +
-    `$${sim.se.toFixed(3)} · gap between simulated and theoretical values is pure sampling ` +
-    `noise and shrinks at rate 1/\u221AN.`;
-}
-
-/* ---- control wiring ---- */
-function updateReadouts(){
-  const { mu, sig, T, N } = simParams();
-  document.getElementById('muVal').textContent  = (mu * 100).toFixed(1) + '%';
-  document.getElementById('sigVal').textContent = Math.round(sig * 100) + '%';
-  document.getElementById('tVal').textContent   = T.toFixed(2).replace(/\.?0+$/, '') + ' yr';
-  document.getElementById('nVal').textContent   = N.toLocaleString('en-US');
-  document.getElementById('simSeed').textContent = 'seed ' + SIM.seed;
-}
-
-/* rerun on next animation frame so slider drags stay smooth */
-function scheduleSim(){
-  updateReadouts();
-  if(SIM.raf) cancelAnimationFrame(SIM.raf);
-  SIM.raf = requestAnimationFrame(() => { SIM.raf = null; runSimulation(); });
-}
-
-let simBooted = false;
-function bootSimulator(){
-  if(simBooted) return;
-  simBooted = true;
-
-  ['muIn', 'sigIn', 'tIn', 'nIn'].forEach(id =>
-    document.getElementById(id).addEventListener('input', scheduleSim));
-
-  document.getElementById('simReseed').addEventListener('click', () => {
-    SIM.seed = 1 + Math.floor(Math.random() * 99999999);   /* seed shown, so still reproducible */
-    scheduleSim();
-  });
-
-  let resizeT = null;
-  window.addEventListener('resize', () => {
-    if(!document.getElementById('simulator').classList.contains('active')) return;
-    clearTimeout(resizeT);
-    resizeT = setTimeout(runSimulation, 120);
-  });
-
-  updateReadouts();
-  runSimulation();
-}
 </script>
 
 </body>
