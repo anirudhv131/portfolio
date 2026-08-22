@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anirudh Venkatesan</title>
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" href="favicon-16x16.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
   :root{
     /* scholar's desk: warm paper, one ink, a single oxford-blue accent */
@@ -23,6 +25,9 @@
     --pos:         #4B7A5B;  /* gains */
     --neg:         #9C4A3C;  /* losses */
 
+    /* one typeface, everywhere */
+    --font: 'Source Serif 4', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -31,7 +36,7 @@
 
   body{
     margin: 0; background: var(--bg); color: var(--ink);
-    font-family: 'Inter', sans-serif; line-height: 1.65; font-size: 17px;
+    font-family: var(--font); line-height: 1.6; font-size: 17.5px;
   }
 
   .wrap{ max-width: 680px; margin: 0 auto; padding: 40px 24px 120px; }
@@ -52,12 +57,12 @@
   }
   .nav .who{
     display: inline-flex; align-items: center; gap: 12px;
-    font-family: 'Newsreader', serif; font-weight: 600; font-size: 18px;
+    font-family: var(--font); font-weight: 600; font-size: 18px;
     letter-spacing: 0; color: var(--ink); text-decoration: none; cursor: pointer;
   }
   .who-name{ transition: color 0.2s var(--ease); }
   .nav .who:hover .who-name{ color: var(--accent); }
-  .nav .tabs{ font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+  .nav .tabs{ font-family: var(--font); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; }
   .nav .tabs a{
     position: relative; color: var(--ink-soft); text-decoration: none;
     padding-bottom: 4px; cursor: pointer; transition: color 0.2s var(--ease);
@@ -78,27 +83,29 @@
 
   /* ---------- home ---------- */
   .eyebrow{
-    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase;
+    font-family: var(--font); font-size: 12.5px; font-weight: 600; text-transform: uppercase;
     letter-spacing: 0.14em; color: var(--ink-faint); margin: 0 0 18px;
     display: flex; align-items: center; gap: 10px;
   }
   .eyebrow::before{ content:""; width: 22px; height: 1px; background: var(--accent-dim); }
   .name{
-    font-family: 'Newsreader', serif; font-weight: 600; font-size: 46px;
+    font-family: var(--font); font-weight: 600; font-size: 46px;
     letter-spacing: -0.015em; line-height: 1.05; margin: 0 0 26px;
   }
-  .bio{ font-family: 'Newsreader', serif; font-size: 19px; color: var(--ink); max-width: 580px; margin: 0; }
+  .bio{ font-family: var(--font); font-size: 19px; color: var(--ink); max-width: 580px; margin: 0 0 18px; }
+  .bio + .bio{ margin-top: 0; }
   .bio a, .links a{
     color: var(--accent); text-decoration: none;
     border-bottom: 1px solid var(--rule-strong); transition: border-color 0.2s var(--ease);
   }
   .bio a:hover, .links a:hover{ border-bottom-color: var(--accent); }
-  .links{ margin-top: 30px; font-family: 'Inter', sans-serif; font-size: 13.5px; }
+  .links{ margin-top: 30px; font-family: var(--font); font-size: 14.5px; }
+  .links .sep{ color: var(--ink-faint); margin: 0 10px; }
   .links a{ border-bottom-color: transparent; }
 
   /* ---------- panel heading ---------- */
-  .panel-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 38px; letter-spacing: -0.015em; margin: 0 0 14px; }
-  .panel-lede{ font-family: 'Newsreader', serif; font-style: italic; font-size: 17px; color: var(--ink-soft); max-width: 580px; margin: 0 0 36px; }
+  .panel-title{ font-family: var(--font); font-weight: 600; font-size: 38px; letter-spacing: -0.015em; margin: 0 0 14px; }
+  .panel-lede{ font-family: var(--font); font-size: 17px; color: var(--ink-soft); max-width: 580px; margin: 0 0 36px; }
 
   /* ---------- scroll reveal ---------- */
   .reveal{ opacity: 0; transform: translateY(20px); }
@@ -111,11 +118,11 @@
     padding: 28px 28px 26px; transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
   }
   .paper:hover{ border-color: var(--rule-strong); background: var(--bg-elev-2); }
-  .paper-tag{ font-family: 'Newsreader', serif; font-style: italic; font-size: 13.5px; color: var(--accent); margin: 0 0 10px; }
-  .paper-title{ font-family: 'Newsreader', serif; font-weight: 600; font-size: 24px; line-height: 1.32; margin: 0 0 12px; letter-spacing: -0.005em; }
-  .paper-desc{ font-family: 'Newsreader', serif; color: var(--ink-soft); margin: 0 0 18px; font-size: 16.5px; line-height: 1.62; }
+  .paper-tag{ font-family: var(--font); font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); margin: 0 0 10px; }
+  .paper-title{ font-family: var(--font); font-weight: 600; font-size: 24px; line-height: 1.32; margin: 0 0 12px; letter-spacing: -0.005em; }
+  .paper-desc{ font-family: var(--font); color: var(--ink-soft); margin: 0 0 18px; font-size: 16.5px; line-height: 1.62; }
   .paper-link{
-    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; color: var(--accent); text-decoration: none;
+    font-family: var(--font); font-size: 14px; font-weight: 600; color: var(--accent); text-decoration: none;
     display: inline-flex; align-items: center; gap: 7px;
   }
   .paper-link svg{ width: 12px; height: 12px; transition: transform 0.25s var(--ease); }
@@ -125,7 +132,7 @@
   /* ---------- investments: live status row ---------- */
   .deskline{
     display: flex; align-items: center; gap: 9px; margin: 0 0 20px;
-    font-family: 'Inter', sans-serif; font-size: 12.5px; color: var(--ink-faint);
+    font-family: var(--font); font-size: 13.5px; color: var(--ink-faint);
   }
   .dot{ width: 6px; height: 6px; border-radius: 50%; background: var(--ink-faint); flex: none; }
   .deskline.live .dot{ background: var(--pos); }
@@ -134,8 +141,8 @@
   .summary{ display: flex; flex-wrap: wrap; border: 1px solid var(--rule); background: var(--bg-elev); }
   .summary .cell{ flex: 1 1 auto; min-width: 104px; padding: 16px 18px; border-right: 1px solid var(--rule); }
   .summary .cell:last-child{ border-right: 0; }
-  .summary .k{ font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-faint); margin: 0 0 7px; }
-  .summary .v{ font-family: 'Newsreader', serif; font-size: 22px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .summary .k{ font-family: var(--font); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-faint); margin: 0 0 7px; }
+  .summary .v{ font-family: var(--font); font-size: 22px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
 
   /* ---------- investments: tracker ---------- */
   .tracker{ border: 1px solid var(--rule); background: var(--bg-elev); margin: 24px 0 14px; }
@@ -147,23 +154,23 @@
   .tracker-row.in{ opacity: 1; transform: none; transition: opacity 0.5s var(--ease), transform 0.5s var(--ease); }
   .tc{ padding: 11px 12px; border-right: 1px solid var(--rule); overflow: hidden; display: flex; align-items: center; }
   .tc:last-child{ border-right: 0; }
-  .th{ font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); white-space: nowrap; }
-  .tv{ font-family: 'Inter', sans-serif; font-size: 13.5px; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .th{ font-family: var(--font); font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); white-space: nowrap; }
+  .tv{ font-family: var(--font); font-size: 14.5px; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .tv a{ color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--rule-strong); transition: border-color 0.2s var(--ease); }
   .tv a:hover{ border-bottom-color: var(--accent); }
   .tv.pos{ color: var(--pos); }
   .tv.neg{ color: var(--neg); }
   .dir-long{ color: var(--pos); }
   .dir-short{ color: var(--neg); }
-  .badge{ display: inline-block; font-family: 'Inter', sans-serif; font-size: 10.5px; font-weight: 500; letter-spacing: 0.02em; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
+  .badge{ display: inline-block; font-family: var(--font); font-size: 11.5px; font-weight: 500; letter-spacing: 0.02em; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; line-height: 1.5; }
   .badge.open{ color: var(--accent-dim); }
-  .table-note{ font-family: 'Inter', sans-serif; font-size: 12.5px; line-height: 1.6; color: var(--ink-faint); margin: 0 0 56px; }
+  .table-note{ font-family: var(--font); font-size: 13.5px; line-height: 1.6; color: var(--ink-faint); margin: 0 0 56px; }
   .table-note b{ color: var(--ink-soft); font-weight: 600; }
 
   /* ---------- write-ups ---------- */
   .positions{ display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
 
-  footer{ margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: 'Inter', sans-serif; font-size: 12.5px; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  footer{ margin-top: 96px; padding-top: 24px; border-top: 1px solid var(--rule); font-family: var(--font); font-size: 13.5px; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
 
   *:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
 
@@ -171,7 +178,6 @@
     .wrap{ padding: 32px 18px 90px; }
     .name{ font-size: 34px; }
     .bio{ font-size: 17.5px; }
-    .bio::first-letter{ font-size: 2.7em; }
     .panel-title{ font-size: 29px; }
     .panel-lede{ font-size: 16px; }
     .paper-title{ font-size: 21px; }
@@ -179,9 +185,9 @@
     .paper{ padding: 22px 20px; }
     .tracker-head, .tracker-row{ grid-template-columns: 62px 1fr 52px 64px 66px 60px 58px; }
     .tc{ padding: 9px 8px; }
-    .th{ font-size: 8.5px; letter-spacing: 0.05em; }
-    .tv{ font-size: 11.5px; }
-    .badge{ font-size: 9px; padding: 1px 6px; }
+    .th{ font-size: 9px; letter-spacing: 0.05em; }
+    .tv{ font-size: 12.5px; }
+    .badge{ font-size: 10px; padding: 1px 6px; }
   }
   @media (prefers-reduced-motion: reduce){
     *{ transition: none !important; animation: none !important; }
@@ -207,13 +213,16 @@
   <section id="home" class="tab-panel">
     <h1 class="name rise" data-d="2">Anirudh Venkatesan</h1>
     <p class="bio rise" data-d="3">
-      Hi, I'm Ani. I'm an incoming student at the University of Virginia, planning on
-      studying economics and statistics. I'm interested in questions where common
-      assumptions and the evidence diverge, in markets and in other areas, and in
-      writing about them through research and shorter essays. Feel free to
-      reach out at <a href="mailto:qpf2aj@virginia.edu">qpf2aj@virginia.edu</a>.
+      Hi, I'm Ani. I'm a student at the University of Virginia, studying statistics,
+      economics, and politics.
+    </p>
+    <p class="bio rise" data-d="3">
+      I'm striving to become a better researcher, and this site is where I do personal
+      projects and put them on display.
     </p>
     <p class="links rise" data-d="3">
+      <a href="mailto:qpf2aj@virginia.edu">qpf2aj@virginia.edu</a>
+      <span class="sep">·</span>
       <a href="https://www.linkedin.com/in/anirudh-venkatesan/" target="_blank" rel="noopener">LinkedIn ↗</a>
     </p>
   </section>
@@ -224,7 +233,6 @@
 
     <div class="papers">
       <article class="paper reveal">
-        <p class="paper-tag">Market Design</p>
         <h3 class="paper-title">The Problem with Prediction Markets</h3>
         <p class="paper-desc">
           This paper argues that the forecasting accuracy credited to prediction markets is produced by a small
@@ -239,7 +247,6 @@
       </article>
 
       <article class="paper reveal">
-        <p class="paper-tag">Market Design</p>
         <h3 class="paper-title">Price Accuracy and Resolution Capture in Prediction Markets</h3>
         <p class="paper-desc">
           This paper distinguishes a prediction market's trading layer, which sets the price, from its resolution layer,
@@ -260,7 +267,6 @@
       </article>
 
       <article class="paper reveal">
-        <p class="paper-tag">Behavioral Finance</p>
         <h3 class="paper-title">Does Retail Attention Predict Returns? Evidence from Robinhood "Popularity" Data, 2018 to 2020</h3>
         <p class="paper-desc">
           This paper examines whether changes in retail investor attention, measured through Robinhood ownership data
@@ -274,7 +280,6 @@
       </article>
 
       <article class="paper reveal">
-        <p class="paper-tag">Sports Economics</p>
         <h3 class="paper-title">What Predicts World Cup Success?</h3>
         <p class="paper-desc">
           This paper investigates which national characteristics, including economic resources, population, and domestic
@@ -288,7 +293,6 @@
       </article>
 
       <article class="paper reveal">
-        <p class="paper-tag">Housing Policy</p>
         <h3 class="paper-title">Reforming Credit Access: Addressing Structural Exclusion in Urban Homeownership</h3>
         <p class="paper-desc">
           This paper examines how the design of credit scoring contributes to structural exclusion from urban
@@ -377,7 +381,7 @@
     <!-- ── position writeups ── -->
     <div class="positions">
       <article class="paper reveal">
-        <p class="paper-tag">Equity Research · Merger Arbitrage · Jun 23, 2026</p>
+        <p class="paper-tag">Jun 23, 2026</p>
         <h3 class="paper-title">Long Warner Bros. Discovery (NASDAQ: WBD): Arbitraging the Paramount Deal</h3>
         <p class="paper-desc">
           This is a merger-arbitrage position, long Warner Bros. Discovery into Paramount's signed $31.00 all-cash
@@ -396,7 +400,7 @@
       </article>
 
       <article class="paper reveal">
-        <p class="paper-tag">Equity Research · Pair Trade · Jun 20, 2026</p>
+        <p class="paper-tag">Jun 20, 2026</p>
         <h3 class="paper-title">Long Texas Roadhouse, Short Cava</h3>
         <p class="paper-desc">
           This is a market-neutral paired position that holds Texas Roadhouse long and Cava short in equal dollar amounts,
@@ -415,7 +419,7 @@
       </article>
 
       <article class="paper reveal">
-        <p class="paper-tag">Equity Research · Jun 15, 2026</p>
+        <p class="paper-tag">Jun 15, 2026</p>
         <h3 class="paper-title">The Cigna Group (NYSE: CI): A Healthcare Giant Mid-Transition</h3>
         <p class="paper-desc">
           Cigna has become the subject of unusually wide disagreement on the Street, with one bank raising its
